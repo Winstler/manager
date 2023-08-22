@@ -1,11 +1,15 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import BottomNavbar from './components/BottomNavbar.vue';
+import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { defineComponent } from 'vue';
+
+import NavbarIonic from './components/NavbarIonic.vue';
+
 </script>
 
 <template>
-  <BottomNavbar/>
-  <RouterView />
+  <ion-app>
+    <ion-router-outlet></ion-router-outlet>
+  </ion-app>
 </template>
 
 <style scoped>
