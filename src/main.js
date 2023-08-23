@@ -25,9 +25,12 @@ import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
 
-const app = createApp(App).use(IonicVue).use(createPinia()).use(router)
+const app = createApp(App)
+.use(IonicVue)
+.use(createPinia())
+.use(router)
 
-import './storage.js'
+
 
 router.isReady().then(() =>{
     app.mount('#app');
