@@ -36,7 +36,8 @@
    
     const obj = ref({
       name: "",
-      sum: 0
+      sum: 0,
+      id: Date.now()
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => modalController.dismiss(obj, 'confirm');

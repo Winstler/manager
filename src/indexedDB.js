@@ -1,44 +1,62 @@
-let db = null;
-const request = indexedDB.open("notes");
+// Открывает или создает базу данных
+function openDatabase() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('finances', 1);
+  
+      request.onerror = (event) => {
+        reject(event.target.error);
+      };
+  
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        resolve(db);
+      };
+  
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        // Создаем хранилище объектов
+        const store = db.createObjectStore('accounts', { keyPath: 'id'});
+      };
+    });
+  }
+  
+  // Добавляет запись в базу данных
+  async function addData(objStore, data) {
+    const db = await openDatabase();
+      return await new Promise((resolve, reject) => {
+          const transaction = db.transaction(objStore, 'readwrite');
+          const store = transaction.objectStore(objStore);
 
-request.onupgradeneeded = e => {
-    db = e.target.result
-    /*notes = {
-        title: "note1",
-        text: "this is the first note"
-    }*/
-    const pNotes = db.createObjectStore("accounts", {keyPath: "title"})
-    console.log("Upgrade is called")
-}
+          const request = store.add(data);
+          
+          request.onsuccess = (event) => {
+              resolve(event.target.result);
+          };
+          request.onerror = (event) => {
+              reject(event.target.error);
+          };
 
-request.onsuccess = e => {
-    db = e.target.result
-    console.log("Success is called")
-}
+      });
+  }
+  
+  // Получает все записи из базы данных
+  async function getData(objStore) {
+    const db = await openDatabase();
+      return await new Promise((resolve, reject) => {
+          const transaction = db.transaction(objStore, 'readonly');
+          const store = transaction.objectStore(objStore);
 
-request.onerror = e => {
-    console.log(e.target.error)
-}
+          const request = store.getAll();
+          
+          request.onsuccess = (event) => {
+              resolve(event.target.result);
+          };
+          request.onerror = (event) => {
+              reject(event.target.error);
+          };
 
-function addNote(){
-    const note = {
-        title: "new note" + Math.random(),
-        text: "this is my note"
-    }
-    const tx = db.transaction("personal_notes", "readwrite");
-    tx.onerror = e => alert(e.target.error)
-    const pNotes = tx.objectStore("personal_notes");
-    pNotes.add(note);
-}
-function viewNotes(){
-    const tx = db.transaction("personal_notes", "readonly")
-    const pNotes = tx.objectStore("personal_notes")
-    const request = pNotes.openCursor()
-    request.onsuccess = e => {
-        const cursor = e.target.result
-        if(cursor){
-            console.log(`Title: ${cursor.value.title}, Text: ${cursor.value.text}`)
-            cursor.continue()
-        }
-    }
+      });
+  }
+function unwrapData(data){
+    return JSON.parse(JSON.stringify(data));
 }
