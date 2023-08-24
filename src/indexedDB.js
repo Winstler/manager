@@ -1,4 +1,6 @@
-// Открывает или создает базу данных
+
+
+
 function openDatabase() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('finances', 1);
@@ -60,3 +62,5 @@ function openDatabase() {
 function unwrapData(data){
     return JSON.parse(JSON.stringify(data));
 }
+
+export {openDatabase, getData, addData, unwrapData}

@@ -37,7 +37,8 @@
     const obj = ref({
       name: "",
       sum: 0,
-      id: Date.now()
+      id: Date.now(),
+      currency: "$"
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => modalController.dismiss(obj, 'confirm');

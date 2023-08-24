@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/transactions',
+      redirect: '/home',
     },
     {
       path: '/',
@@ -13,7 +13,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/transactions',
+          redirect: '/home',
         },
         {
           path: 'accounts',
@@ -24,16 +24,16 @@ const router = createRouter({
           component: () => import('../views/Transactions.vue'),
         },
         {
-          path: 'radio',
-          component: () => import('../views/RadioPage.vue'),
+          path: 'home',
+          component: () => import('../views/Home.vue'),
         },
         {
-          path: 'library',
-          component: () => import('../views/LibraryPage.vue'),
+          path: 'analytics',
+          component: () => import('../views/Analytics.vue'),
         },
         {
-          path: 'search',
-          component: () => import('../views/SearchPage.vue'),
+          path: 'more',
+          component: () => import('../views/More.vue'),
         },
       ],
     },

@@ -2,11 +2,11 @@
     <ion-page>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Radio</ion-title>
+          <ion-title>Home</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
-        <div class="example-content">Radio content</div>
+        <div class="example-content">Home content</div>
       </ion-content>
     </ion-page>
   </template>

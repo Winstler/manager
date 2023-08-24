@@ -13,19 +13,19 @@
             <ion-label>Transactions</ion-label>
           </ion-tab-button>
   
-          <ion-tab-button tab="radio" href="/radio">
-            <ion-icon :icon="radio" />
-            <ion-label>Radio</ion-label>
+          <ion-tab-button tab="home" href="/home">
+            <ion-icon :icon="home" />
+            <ion-label>Home</ion-label>
           </ion-tab-button>
   
-          <ion-tab-button tab="library" href="/library">
-            <ion-icon :icon="library" />
-            <ion-label>Library</ion-label>
+          <ion-tab-button tab="analytics" href="/analytics">
+            <ion-icon :icon="pieChart" />
+            <ion-label>Analytics</ion-label>
           </ion-tab-button>
   
-          <ion-tab-button tab="search" href="/search">
-            <ion-icon :icon="search" />
-            <ion-label>Search</ion-label>
+          <ion-tab-button tab="more" href="/more">
+            <ion-icon :icon="menu" />
+            <ion-label>More</ion-label>
           </ion-tab-button>
         </ion-tab-bar>
       </ion-tabs>
@@ -35,7 +35,7 @@
   <script>
     import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonItem, IonList } from '@ionic/vue';
   
-    import { card, receipt, radio, library, search } from 'ionicons/icons';
+    import { card, receipt, home, pieChart, menu } from 'ionicons/icons';
   
     export default {
       components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonItem, IonList },
@@ -43,9 +43,9 @@
         return {
           card,
           receipt,
-          radio,
-          library,
-          search,
+          home,
+          pieChart,
+          menu,
         };
       },
     };
