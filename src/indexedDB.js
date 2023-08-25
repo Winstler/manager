@@ -53,23 +53,33 @@ async function getData(objStore) {
     });
 }
 
-function updateAccount(objStore, data) {
-  return openDatabase().then(db => {
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(objStore, 'readwrite');
-      const store = transaction.objectStore(objStore);
+async function updateAccount(objStore, data) {
+  const db = await openDatabase();
+  return await new Promise((resolve, reject) => {
+    const transaction = db.transaction(objStore, 'readwrite');
+    const store = transaction.objectStore(objStore);
 
-      const request = store.put(data);
-      
-      request.onsuccess = (event) => {
-        resolve(event.target.result);
-      };
-      request.onerror = (event) => {
-        reject(event.target.error);
-      };
+    const request = store.put(data);
 
-    });
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+    request.onerror = (event_1) => {
+      reject(event_1.target.error);
+    };
+
   });
+}
+
+async function deleteAccountById(objStore, id) {
+  const db = await openDatabase(); // Открываем базу данных
+  const transaction = db.transaction(objStore, 'readwrite'); // Открываем транзакцию на чтение/запись
+  const store = transaction.objectStore(objStore); // Получаем хранилище объектов
+
+  store.delete(id);
+
+  // Завершаем транзакцию
+  await transaction.complete;
 }
 
 function unwrapData(data){
@@ -77,7 +87,12 @@ function unwrapData(data){
 }
 
 function changeObjectInArray(array, id, data){
-  const indexToChange = array.findIndex((item) => item.id == id)
-  array[indexToChange] = data;
+  const index = array.findIndex((item) => item.id == id)
+  array[index] = data;
 }
-export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount}
+
+function deleteObjectInArray(array, id){
+  const index = array.findIndex((item) => item.id == id)
+  array.splice(index, 1);
+}
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteAccountById}

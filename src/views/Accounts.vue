@@ -32,7 +32,7 @@
   import { add, card } from 'ionicons/icons';
   import { ref, reactive , computed, onMounted, onBeforeMount} from 'vue';
 
-  import { getData, addData, unwrapData, changeObjectInArray, updateAccount} from '../indexedDB'
+  import { getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteAccountById} from '../indexedDB'
 
   import AccountsModalAdd from '../components/accounts/AccountsModalAdd.vue';
   import AccountsModalChange from '../components/accounts/AccountsModalChange.vue';
@@ -51,7 +51,6 @@
     }
     }
   );
-  console.log(accounts);
   const totalSum = computed(() => {
     return accounts.reduce((sum, current) => Number(sum) + Number(current.sum), 0)
   });
@@ -87,6 +86,10 @@
       changeObjectInArray(accounts, data.value.id, data.value);
       const unwraped = unwrapData(data.value);
       updateAccount("accounts", unwraped)
+    }
+    else if(role === "delete"){
+      deleteObjectInArray(accounts, data);
+      deleteAccountById("accounts", data);
     }
   };
 
