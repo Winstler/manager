@@ -1,6 +1,3 @@
-
-
-
 function openDatabase() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('finances', 1);
@@ -23,44 +20,64 @@ function openDatabase() {
   }
   
   // Добавляет запись в базу данных
-  async function addData(objStore, data) {
-    const db = await openDatabase();
-      return await new Promise((resolve, reject) => {
-          const transaction = db.transaction(objStore, 'readwrite');
-          const store = transaction.objectStore(objStore);
-
-          const request = store.add(data);
-          
-          request.onsuccess = (event) => {
-              resolve(event.target.result);
-          };
-          request.onerror = (event) => {
-              reject(event.target.error);
-          };
-
-      });
-  }
+async function addData(objStore, data) {
+  const db = await openDatabase();
+    return await new Promise((resolve, reject) => {
+        const transaction = db.transaction(objStore, 'readwrite');
+        const store = transaction.objectStore(objStore);
+        const request = store.add(data);
+        
+        request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
+}
   
   // Получает все записи из базы данных
-  async function getData(objStore) {
-    const db = await openDatabase();
-      return await new Promise((resolve, reject) => {
-          const transaction = db.transaction(objStore, 'readonly');
-          const store = transaction.objectStore(objStore);
+async function getData(objStore) {
+  const db = await openDatabase();
+    return await new Promise((resolve, reject) => {
+        const transaction = db.transaction(objStore, 'readonly');
+        const store = transaction.objectStore(objStore);
+        const request = store.getAll();
+        
+        request.onsuccess = (event) => {
+            resolve(event.target.result);
+        };
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
+}
 
-          const request = store.getAll();
-          
-          request.onsuccess = (event) => {
-              resolve(event.target.result);
-          };
-          request.onerror = (event) => {
-              reject(event.target.error);
-          };
+function updateAccount(objStore, data) {
+  return openDatabase().then(db => {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(objStore, 'readwrite');
+      const store = transaction.objectStore(objStore);
 
-      });
-  }
+      const request = store.put(data);
+      
+      request.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+      request.onerror = (event) => {
+        reject(event.target.error);
+      };
+
+    });
+  });
+}
+
 function unwrapData(data){
     return JSON.parse(JSON.stringify(data));
 }
 
-export {openDatabase, getData, addData, unwrapData}
+function changeObjectInArray(array, id, data){
+  const indexToChange = array.findIndex((item) => item.id == id)
+  array[indexToChange] = data;
+}
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount}

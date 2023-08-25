@@ -11,13 +11,13 @@
         </ion-item>
         <h2>Your accounts</h2>
         <ion-list v-for="account in accounts" style ="p-6 max-w-sm mx-auto bg-white rounded-xl">
-              <ion-item style ="flex items-center">
+              <ion-item button @click = "openModalChange(account.id, account.name, account.sum)" style ="flex items-center">
                 <ion-icon slot = "start" :icon = "card" ></ion-icon>
                 <ion-label class="px-2"> {{account.name}} </ion-label>
                 <ion-label slot="end"> <span  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ account.currency }}</span></ion-label>
               </ion-item>
         </ion-list>
-        <ion-fab @click = "openModal"  class ="p-2" slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab @click = "openModalAdd"  class ="p-2" slot="fixed" vertical="bottom" horizontal="end">
           <ion-fab-button>
             <ion-icon :icon="add"></ion-icon>
           </ion-fab-button>
@@ -31,10 +31,11 @@
   import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonThumbnail, IonLabel, IonReorder, IonReorderGroup  } from '@ionic/vue';
   import { add, card } from 'ionicons/icons';
   import { ref, reactive , computed, onMounted, onBeforeMount} from 'vue';
-  import {openDatabase, getData, addData, unwrapData} from '../indexedDB'
 
-  import AccountsModal from '../components/AccountsModal.vue';
-  
+  import { getData, addData, unwrapData, changeObjectInArray, updateAccount} from '../indexedDB'
+
+  import AccountsModalAdd from '../components/accounts/AccountsModalAdd.vue';
+  import AccountsModalChange from '../components/accounts/AccountsModalChange.vue';
   
   const accounts = reactive([]);
   const error = ref(null);
@@ -55,9 +56,9 @@
     return accounts.reduce((sum, current) => Number(sum) + Number(current.sum), 0)
   });
 
-  const openModal = async () => {
+  const openModalAdd = async () => {
     const modal = await modalController.create({
-    component: AccountsModal,
+    component: AccountsModalAdd,
     
     });
     modal.present();
@@ -69,16 +70,24 @@
     }
   };
 
-  const handleReorder = (event) => {
-    console.log("!!!")
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    console.log('Dragged from index', event.detail.from, 'to', event.detail.to)
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
-    event.detail.complete();
+  const openModalChange = async (id, name, sum) => {
     
+    const modal = await modalController.create({
+      component: AccountsModalChange,
+      componentProps: {
+        accountId: id,
+        accountName: name,
+        accountSum: Number(sum)
+      },
+    
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    if (role === 'confirm') {
+      changeObjectInArray(accounts, data.value.id, data.value);
+      const unwraped = unwrapData(data.value);
+      updateAccount("accounts", unwraped)
+    }
   };
 
 </script>
