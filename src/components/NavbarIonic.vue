@@ -13,11 +13,6 @@
             <ion-label>Transactions</ion-label>
           </ion-tab-button>
   
-          <ion-tab-button tab="home" href="/home">
-            <ion-icon :icon="home" />
-            <ion-label>Home</ion-label>
-          </ion-tab-button>
-  
           <ion-tab-button tab="analytics" href="/analytics">
             <ion-icon :icon="pieChart" />
             <ion-label>Analytics</ion-label>

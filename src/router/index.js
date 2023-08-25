@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/home',
+      redirect: '/transactions',
     },
     {
       path: '/',
@@ -13,7 +13,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/home',
+          redirect: '/transactions',
         },
         {
           path: 'accounts',
@@ -22,10 +22,6 @@ const router = createRouter({
         {
           path: 'transactions',
           component: () => import('../views/Transactions.vue'),
-        },
-        {
-          path: 'home',
-          component: () => import('../views/Home.vue'),
         },
         {
           path: 'analytics',
