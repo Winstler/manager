@@ -17,7 +17,7 @@
       <ion-item>
         <ion-input label-placement="stacked" label="Enter the amount of money" v-model = "obj.sum" type="number" placeholder="0$"></ion-input>
       </ion-item>
-      <ion-button id="present-alert" color = "danger" expand="block">Delete</ion-button>
+      <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Delete</ion-button>
       <ion-alert
         trigger="present-alert"
         header="Are you sure?"
@@ -39,7 +39,9 @@
       IonInput,
       modalController,
       IonAlert,
+      IonIcon,
     } from '@ionic/vue';
+    import { trash } from 'ionicons/icons';
     import { ref } from 'vue';
     const props = defineProps({
         accountId: Number,

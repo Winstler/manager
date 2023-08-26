@@ -15,7 +15,7 @@
         <ion-input label-placement="stacked" label="Enter account name" v-model="obj.name" placeholder="Credit card"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input label="" v-model = "obj.sum" type="number" placeholder="0$"></ion-input>
+        <ion-input  label-placement="stacked" label="Enter the amount of money" v-model = "obj.sum" type="number" placeholder="0 $"></ion-input>
       </ion-item>
     </ion-content>
   </template>
@@ -31,15 +31,26 @@
       IonItem,
       IonInput,
       modalController,
+      useBackButton ,
     } from '@ionic/vue';
-    import { ref } from 'vue';
+    import { ref, onMounted  } from 'vue';
    
     const obj = ref({
       name: "",
-      sum: 0,
+      sum: null,
       id: Date.now(),
       currency: "$"
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
-    const confirm = () => modalController.dismiss(obj, 'confirm');
+    const confirm = () => {
+      if (!obj.value.name){
+        console.log(obj.value.sum)
+        obj.value.name = "New account";
+      }
+      if(obj.value.sum === null){
+        obj.value.sum = 0;
+      }
+      modalController.dismiss(obj, 'confirm')
+    };
+ 
   </script>

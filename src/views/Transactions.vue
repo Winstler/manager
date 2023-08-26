@@ -5,8 +5,8 @@
           <ion-title>Transactions</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-content>
-        <div class="example-content">Here are your transactions</div>
+      <ion-content color ="light">
+        
       </ion-content>
     </ion-page>
 </template>
