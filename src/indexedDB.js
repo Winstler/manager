@@ -14,7 +14,9 @@ function openDatabase() {
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         // Создаем хранилище объектов
-        const store = db.createObjectStore('accounts', { keyPath: 'id'});
+        db.createObjectStore("accounts", { keyPath: 'id'});
+        db.createObjectStore("transactions", { keyPath: 'id'});
+        db.createObjectStore("categories", { keyPath: 'id'});
       };
     });
   }
@@ -28,10 +30,10 @@ async function addData(objStore, data) {
         const request = store.add(data);
         
         request.onsuccess = (event) => {
-            resolve(event.target.result);
+          resolve(event.target.result);
         };
         request.onerror = (event) => {
-            reject(event.target.error);
+          reject(event.target.error);
         };
     });
 }
@@ -64,14 +66,14 @@ async function updateAccount(objStore, data) {
     request.onsuccess = (event) => {
       resolve(event.target.result);
     };
-    request.onerror = (event_1) => {
-      reject(event_1.target.error);
+    request.onerror = (event) => {
+      reject(event.target.error);
     };
 
   });
 }
 
-async function deleteAccountById(objStore, id) {
+async function deleteRecordById(objStore, id) {
   const db = await openDatabase(); // Открываем базу данных
   const transaction = db.transaction(objStore, 'readwrite'); // Открываем транзакцию на чтение/запись
   const store = transaction.objectStore(objStore); // Получаем хранилище объектов
@@ -95,4 +97,11 @@ function deleteObjectInArray(array, id){
   const index = array.findIndex((item) => item.id == id)
   array.splice(index, 1);
 }
-export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteAccountById}
+
+function generateUniqueId() {
+  const timestamp = new Date().getTime();
+  const randomValue = Math.random().toString(36).substring(2);
+  return timestamp + randomValue;
+}
+
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteRecordById, generateUniqueId}

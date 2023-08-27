@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia'
 import { getData } from '../indexedDB'
 
-export const useAccountsStore = defineStore('accounts', {
+export const useTransactionsStore = defineStore('transactions', {
   state: () => ({
-    accounts: [],
+    transactions: [],
     error: "",
   }),
   actions: {
-    async getAccounts(){
-      if(this.accounts.length === 0){
+    async getTransactions(){
+      if(this.transactions.length === 0){
         try{
-          const data = await getData("accounts");
+          const data = await getData("transactions");
           data.forEach(element => {
-            this.accounts.push(element);
+            this.transactions.push(element);
           });
         }
         catch(err){

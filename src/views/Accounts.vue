@@ -10,12 +10,12 @@
 
       <ion-content class="ion-padding" color="light">
 
-        <ion-item v-if="accountsStore.accountsErr" class="text-red-400">
-          {{ accountsStore.accountsErr }}
+        <ion-item v-if="accountsStore.error" class="text-red-400">
+          {{ accountsStore.error }}
         </ion-item>
 
         <h2>Your accounts</h2>
-        <ion-list>
+        <ion-list class="rounded-xl">
           <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
           <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum)" style ="flex items-center">
             <ion-icon slot = "start" :icon = "card" ></ion-icon>
@@ -35,14 +35,14 @@
 </template>
   
 <script setup >
-  import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonThumbnail, IonLabel, IonReorder, IonReorderGroup, IonNote  } from '@ionic/vue';
+  import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel  } from '@ionic/vue';
   import { add, card } from 'ionicons/icons';
-  import { ref, reactive , computed, onMounted} from 'vue';
+  import { computed} from 'vue';
 
-  import { getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteAccountById} from '../indexedDB'
+  import { addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteRecordById} from '../indexedDB'
 
-  import AccountsModalAdd from '../components/accounts/AccountsModalAdd.vue';
-  import AccountsModalChange from '../components/accounts/AccountsModalChange.vue';
+  import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue';
+  import AccountsModalChange from '@/components/accounts/AccountsModalChange.vue';
   
   import { useAccountsStore } from '../stores/accountsStore'
   const accountsStore = useAccountsStore();
@@ -91,7 +91,7 @@
     }
     else if(role === "delete"){
       deleteObjectInArray(accountsStore.accounts, data);
-      deleteAccountById("accounts", data);
+      deleteRecordById("accounts", data);
     }
   };
 </script>

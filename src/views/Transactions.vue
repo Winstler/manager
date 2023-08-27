@@ -2,19 +2,68 @@
     <ion-page>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Transactions</ion-title>
+          <ion-title> Total balance:</ion-title>
+
         </ion-toolbar>
       </ion-header>
-      <ion-content color ="light">
-        
+
+
+      <ion-content class="ion-padding" color="light">
+
+        <ion-item v-if="transactionsStore.error" class="text-red-400">
+          {{ transactionsStore.error }}
+        </ion-item>
+        <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
+        <ion-list>
+          <ion-item v-for = "transaction in transactionsStore.transactions">
+            {{ transaction.sum }}
+          </ion-item>
+        </ion-list>
+        <ion-fab @click = "openSheet" class ="p-2" slot="fixed" vertical="bottom" horizontal="end">
+          <ion-fab-button>
+            <ion-icon :icon="add"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
       </ion-content>
     </ion-page>
 </template>
   
-<script>
-  import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage } from '@ionic/vue';
+<script setup>
+  import { IonList, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonItem, modalController  } from '@ionic/vue';
+  import { add } from 'ionicons/icons';
+  import { useTransactionsStore } from '../stores/transactionsStore'
+  import { computed } from 'vue';
+  import OpenSheetAdd  from '../components/transactions/OpenSheetAdd.vue'
+  import { generateUniqueId, unwrapData, addData } from "../indexedDB"
 
-  export default {
-    components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  const transactionsStore = useTransactionsStore();
+  transactionsStore.getTransactions()
+
+  import { useAccountsStore } from '../stores/accountsStore'
+  const accountsStore = useAccountsStore();
+  accountsStore.getAccounts()
+
+  const infoMessage = computed(() => {
+    if(transactionsStore.transactions.length == 0){
+      return "You don't have any transactions yet"
+    }
+  });
+
+  const openSheet = async () => {
+    const modal = await modalController.create({
+      component: OpenSheetAdd,
+        initialBreakpoint: 0.5,
+        breakpoints: [0.5, 1]
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    if (role === 'confirm') {
+      const transaction = {id: generateUniqueId(), account: data.value.currentAccount ,sum: data.value.sum, currency: "$", categorie: "test", created: Date.now()};
+      transactionsStore.transactions.push(transaction);
+      const index = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount)
+      accountsStore.accounts[index].sum -= transaction.sum
+      const unwraped = unwrapData(transaction);
+      addData("transactions", unwraped);
+    }
   };
 </script>
