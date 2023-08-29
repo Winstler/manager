@@ -55,7 +55,7 @@ async function getData(objStore) {
     });
 }
 
-async function updateAccount(objStore, data) {
+async function updateData(objStore, data) {
   const db = await openDatabase();
   return await new Promise((resolve, reject) => {
     const transaction = db.transaction(objStore, 'readwrite');
@@ -84,6 +84,24 @@ async function deleteRecordById(objStore, id) {
   await transaction.complete;
 }
 
+async function deleteAllRecordWithConditions(objStore, property, data) {
+  const db = await openDatabase(); 
+  const transaction = db.transaction(objStore, 'readwrite');
+  const store = transaction.objectStore(objStore);
+  const cursorRequest = store.openCursor();
+  cursorRequest.onsuccess = function(event) {
+    let cursor = event.target.result;
+    if (cursor) {
+      if(cursor.value[property] == data){
+        store.delete(cursor.value.id)
+      }
+      // Move to the next record
+      cursor.continue();
+    }
+  };
+  
+}
+
 function unwrapData(data){
     return JSON.parse(JSON.stringify(data));
 }
@@ -104,4 +122,5 @@ function generateUniqueId() {
   return timestamp + randomValue;
 }
 
-export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteRecordById, generateUniqueId}
+
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, generateUniqueId, deleteAllRecordWithConditions}

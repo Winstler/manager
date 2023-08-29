@@ -39,7 +39,7 @@
   import { add, card } from 'ionicons/icons';
   import { computed} from 'vue';
 
-  import { addData, unwrapData, changeObjectInArray, updateAccount, deleteObjectInArray, deleteRecordById} from '../indexedDB'
+  import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions} from '../indexedDB'
 
   import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue';
   import AccountsModalChange from '@/components/accounts/AccountsModalChange.vue';
@@ -47,6 +47,10 @@
   import { useAccountsStore } from '../stores/accountsStore'
   const accountsStore = useAccountsStore();
   accountsStore.getAccounts()
+
+  import { useTransactionsStore } from '../stores/transactionsStore'
+  const transactionsStore = useTransactionsStore();
+  transactionsStore.getTransactions()
 
   const infoMessage = computed(() => {
     if(accountsStore.accounts.length == 0){
@@ -87,11 +91,19 @@
     if (role === 'confirm') {
       changeObjectInArray(accountsStore.accounts, data.value.id, data.value);
       const unwraped = unwrapData(data.value);
-      updateAccount("accounts", unwraped)
+      updateData("accounts", unwraped)
     }
     else if(role === "delete"){
       deleteObjectInArray(accountsStore.accounts, data);
       deleteRecordById("accounts", data);
+      deleteAllTransactions(data);
+      deleteAllRecordWithConditions("transactions", "account", data)
     }
   };
+
+  function deleteAllTransactions(accountId){
+    const filteredArray = transactionsStore.transactions.filter((item) => item.account != accountId);
+    transactionsStore.transactions = filteredArray;
+  }
+
 </script>

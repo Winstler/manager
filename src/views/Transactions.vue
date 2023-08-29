@@ -14,9 +14,12 @@
           {{ transactionsStore.error }}
         </ion-item>
         <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
-        <ion-list>
+        <ion-list class = "rounded-xl">
           <ion-item v-for = "transaction in transactionsStore.transactions">
-            {{ transaction.sum }}
+            <ion-label>
+              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum <= 0 ? 'text-green-500' : 'text-red-500'"><span v-if = "transaction.sum > 0">-</span>{{ transaction.sum }}</div></h2>
+              <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
+            </ion-label>
           </ion-item>
         </ion-list>
         <ion-fab @click = "openSheet" class ="p-2" slot="fixed" vertical="bottom" horizontal="end">
@@ -29,12 +32,12 @@
 </template>
   
 <script setup>
-  import { IonList, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonItem, modalController  } from '@ionic/vue';
-  import { add } from 'ionicons/icons';
+  import { IonLabel, IonList, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonItem, modalController  } from '@ionic/vue';
+  import { add, card } from 'ionicons/icons';
   import { useTransactionsStore } from '../stores/transactionsStore'
   import { computed } from 'vue';
   import OpenSheetAdd  from '../components/transactions/OpenSheetAdd.vue'
-  import { generateUniqueId, unwrapData, addData } from "../indexedDB"
+  import { generateUniqueId, unwrapData, addData, updateData } from "../indexedDB"
 
   const transactionsStore = useTransactionsStore();
   transactionsStore.getTransactions()
@@ -58,10 +61,11 @@
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      const transaction = {id: generateUniqueId(), account: data.value.currentAccount ,sum: data.value.sum, currency: "$", categorie: "test", created: Date.now()};
-      transactionsStore.transactions.push(transaction);
-      const index = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount)
-      accountsStore.accounts[index].sum -= transaction.sum
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount)
+      const transaction = {id: generateUniqueId(), account: data.value.currentAccount, accountName: accountsStore.accounts[accountIndex].name ,sum: data.value.sum, currency: "$", categorie: "test", created: Date.now()};
+      transactionsStore.transactions.unshift(transaction);
+      accountsStore.accounts[accountIndex].sum -= transaction.sum;
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
     }
