@@ -39,7 +39,7 @@
   import { add, card } from 'ionicons/icons';
   import { computed} from 'vue';
 
-  import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions} from '../indexedDB'
+  import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId} from '../indexedDB'
 
   import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue';
   import AccountsModalChange from '@/components/accounts/AccountsModalChange.vue';
@@ -69,7 +69,7 @@
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      accountsStore.accounts.push({id: Date.now(), sum: data.value.sum, name: data.value.name, currency: "$"});
+      accountsStore.accounts.push({id: data.value.id, sum: data.value.sum, name: data.value.name, currency: "$"});
       const unwraped = unwrapData(data.value);
       addData("accounts", unwraped);
     }

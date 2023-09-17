@@ -36,7 +36,7 @@
   }
 
   const obj = ref({
-    currentAccount: 0,
+    currentAccount: "",
     sum: 0,
   })
   accountsStore.getAccounts()

@@ -34,11 +34,12 @@
       useBackButton ,
     } from '@ionic/vue';
     import { ref, onMounted  } from 'vue';
+import { generateUniqueId } from '../../indexedDB';
    
     const obj = ref({
       name: "",
       sum: null,
-      id: Date.now(),
+      id: generateUniqueId(),
       currency: "$"
     })
     const cancel = () => modalController.dismiss(null, 'cancel');

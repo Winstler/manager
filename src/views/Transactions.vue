@@ -61,13 +61,23 @@
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount)
-      const transaction = {id: generateUniqueId(), account: data.value.currentAccount, accountName: accountsStore.accounts[accountIndex].name ,sum: data.value.sum, currency: "$", categorie: "test", created: Date.now()};
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount.replace(/"/g, ""))
+      const transaction = {
+        id: generateUniqueId(),
+        account: data.value.currentAccount.replace(/"/g, ""),
+        accountName: accountsStore.accounts[accountIndex].name, 
+        sum: data.value.sum,
+        currency: "$",
+        categorie: "test", 
+        created: Date.now()
+      };
       transactionsStore.transactions.unshift(transaction);
-      accountsStore.accounts[accountIndex].sum -= transaction.sum;
-      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
+      
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
+
+      accountsStore.accounts[accountIndex].sum -= transaction.sum;
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
     }
   };
 </script>
