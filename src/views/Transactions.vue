@@ -46,6 +46,10 @@
   const accountsStore = useAccountsStore();
   accountsStore.getAccounts()
 
+  import { useCategoriesStore} from "@/stores/categoriesStore"
+  const categoriesStore = useCategoriesStore();
+categoriesStore.getCategories()
+
   const infoMessage = computed(() => {
     if(transactionsStore.transactions.length == 0){
       return "You don't have any transactions yet"
@@ -61,14 +65,16 @@
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount.replace(/"/g, ""))
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.currentAccount.replace(/"/g, ""));
+      const categorieIndex = categoriesStore.categories.findIndex((item) => item.id == data.value.categorie.replace(/"/g, ""))
       const transaction = {
         id: generateUniqueId(),
         account: data.value.currentAccount.replace(/"/g, ""),
         accountName: accountsStore.accounts[accountIndex].name, 
         sum: data.value.sum,
         currency: "$",
-        categorie: "test", 
+        categorieId: data.value.categorie.replace(/"/g, ""), 
+        categorie: categoriesStore.categories[categorieIndex].name,
         created: Date.now()
       };
       transactionsStore.transactions.unshift(transaction);
