@@ -17,7 +17,7 @@
         <ion-list class = "rounded-xl">
           <ion-item v-for = "transaction in transactionsStore.transactions">
             <ion-label>
-              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum <= 0 ? 'text-green-500' : 'text-red-500'"><span v-if = "transaction.sum > 0">-</span>{{ transaction.sum }}</div></h2>
+              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }}</div></h2>
               <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
             </ion-label>
           </ion-item>
@@ -36,7 +36,7 @@
   import { add, card } from 'ionicons/icons';
   import { useTransactionsStore } from '../stores/transactionsStore'
   import { computed } from 'vue';
-  import OpenSheetAdd  from '../components/transactions/OpenSheetAdd.vue'
+  import OpenSheetAdd  from '@/components/transactions/OpenSheetAdd.vue'
   import { generateUniqueId, unwrapData, addData, updateData } from "../indexedDB"
 
   const transactionsStore = useTransactionsStore();
@@ -82,7 +82,7 @@ categoriesStore.getCategories()
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
 
-      accountsStore.accounts[accountIndex].sum -= transaction.sum;
+      accountsStore.accounts[accountIndex].sum += transaction.sum;
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
     }
   };

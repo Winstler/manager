@@ -44,7 +44,7 @@
     import { trash } from 'ionicons/icons';
     import { ref } from 'vue';
     const props = defineProps({
-        accountId: Number,
+        accountId: String,
         accountName: String,
         accountSum: Number
     })

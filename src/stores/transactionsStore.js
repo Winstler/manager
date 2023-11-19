@@ -19,6 +19,105 @@ export const useTransactionsStore = defineStore('transactions', {
           this.error = err;
         }
     }
+    },
+    async getSumOfCategory(categoryId){
+      let sum = 0;
+      this.transactions.map((item) =>{
+        if (item.categorieId === categoryId){
+          sum += Number(item.sum);
+        }
+      })
+      return sum;
     }
-  }
+  },
+  getters: {
+    getCategories() {
+      return this.transactions.map((t) => t.categorie);
+    },
+    expensesStats(){
+      const categoriesMap = {};
+
+    // Агрегируем данные по категориям
+    this.transactions.forEach((transaction) => {
+      const categoryId = transaction.categorieId;
+      const categorySum = Number(transaction.sum);
+
+      if (categorySum < 0) {
+      if (!categoriesMap[categoryId]) {
+        categoriesMap[categoryId] = {
+          value: categorySum,
+          label: transaction.categorie,
+        };
+      } else {
+        categoriesMap[categoryId].value += categorySum;
+      }
+      }
+    });
+
+    // Преобразуем объект в массив
+    const statsArray = Object.values(categoriesMap);
+
+    return statsArray;
+    },
+    incomeStats(){
+      const categoriesMap = {};
+
+    // Агрегируем данные по категориям
+    this.transactions.forEach((transaction) => {
+      const categoryId = transaction.categorieId;
+      const categorySum = Number(transaction.sum);
+
+      if (categorySum > 0) {
+      if (!categoriesMap[categoryId]) {
+        categoriesMap[categoryId] = {
+          value: categorySum,
+          label: transaction.categorie,
+        };
+      } else {
+        categoriesMap[categoryId].value += categorySum;
+      }
+      }
+    });
+
+    // Преобразуем объект в массив
+    const statsArray = Object.values(categoriesMap);
+
+    return statsArray;
+    },
+    expensesCategoryLabels() {
+      const uniqueExpenseLabels = new Set();
+  
+      // Собираем уникальные метки категорий
+      this.transactions.forEach((transaction) => {
+        const categorySum = Number(transaction.sum);
+
+        if (categorySum < 0) {
+          uniqueExpenseLabels.add(transaction.categorie);
+        }
+      });
+  
+      // Преобразуем Set в массив
+      const expenseLabelsArray = Array.from(uniqueExpenseLabels);
+  
+      return expenseLabelsArray;
+  },
+  incomeCategoryLabels() {
+    const uniqueExpenseLabels = new Set();
+
+    // Собираем уникальные метки категорий
+    this.transactions.forEach((transaction) => {
+      const categorySum = Number(transaction.sum);
+
+      if (categorySum > 0) {
+        uniqueExpenseLabels.add(transaction.categorie);
+      }
+    });
+
+    // Преобразуем Set в массив
+    const expenseLabelsArray = Array.from(uniqueExpenseLabels);
+
+    return expenseLabelsArray;
+},
+}
+  
 })

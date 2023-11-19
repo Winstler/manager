@@ -34,7 +34,7 @@
     </ion-page>
 </template>
   
-<script setup >
+<script setup>
   import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel  } from '@ionic/vue';
   import { add, card } from 'ionicons/icons';
   import { computed} from 'vue';

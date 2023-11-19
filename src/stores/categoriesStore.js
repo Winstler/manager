@@ -36,5 +36,13 @@ export const useCategoriesStore = defineStore('categories', {
         }
     }
     }
+  },
+  getters: {
+    getCategoriesNames(){
+      return this.categories.map((c) => c.name)
+    },
+    getCategoriesIds(){
+      this.categories.map((c) => c.id)
+    }
   }
 })

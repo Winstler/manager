@@ -22,8 +22,6 @@
                 <ion-item>
                     <ion-input label-placement="stacked" label="Enter the amount of money" type="number" v-model = "obj.sum"></ion-input>
                 </ion-item>
-                {{ obj.currentAccount }}
-                {{ obj.categorie }}
             </ion-list>
         </ion-content>
 </template>

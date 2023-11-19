@@ -102,6 +102,7 @@ async function deleteAllRecordWithConditions(objStore, property, data) {
   
 }
 
+
 function unwrapData(data){
     return JSON.parse(JSON.stringify(data));
 }
@@ -123,4 +124,4 @@ function generateUniqueId() {
 }
 
 
-export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, generateUniqueId, deleteAllRecordWithConditions}
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, generateUniqueId, deleteAllRecordWithConditions }
