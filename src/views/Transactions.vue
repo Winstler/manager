@@ -15,7 +15,7 @@
         </ion-item>
         <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
         <ion-list class = "rounded-xl">
-          <ion-item v-for = "transaction in transactionsStore.transactions">
+          <ion-item v-for = "transaction in transactionsStore.transactions" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
             <ion-label>
               <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }}</div></h2>
               <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
@@ -35,9 +35,11 @@
   import { IonLabel, IonList, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonItem, modalController  } from '@ionic/vue';
   import { add, card } from 'ionicons/icons';
   import { useTransactionsStore } from '../stores/transactionsStore'
-  import { computed } from 'vue';
+  import { computed, transformVNodeArgs } from 'vue';
   import OpenSheetAdd  from '@/components/transactions/OpenSheetAdd.vue'
-  import { generateUniqueId, unwrapData, addData, updateData } from "../indexedDB"
+  import { generateUniqueId, unwrapData, addData, updateData, deleteObjectInArray, deleteRecordById } from "../indexedDB"
+
+  import TransactionModalChange from '@/components/transactions/TransactionModalChange.vue';
 
   const transactionsStore = useTransactionsStore();
   transactionsStore.getTransactions()
@@ -87,4 +89,31 @@ categoriesStore.getCategories()
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
     }
   };
+  const openModalChange = async (id, categorieId, sum, accountId, categorieName, accountName) => {
+    
+    const modal = await modalController.create({
+      component: TransactionModalChange,
+      initialBreakpoint: 0.5,
+        breakpoints: [0.5, 1],
+      componentProps: {
+        transactionId: id,
+        categorieId: categorieId,
+        accountSum: Number(sum),
+        accountId: accountId,
+      },
+    
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    /*if (role === 'confirm') {
+      changeObjectInArray(accountsStore.accounts, data.value.id, data.value);
+      const unwraped = unwrapData(data.value);
+      updateData("accounts", unwraped)
+    }*/
+    if(role === "delete"){
+      deleteObjectInArray(transactionsStore.transactions, data);
+      deleteRecordById("transactions", data);
+    }
+  };
+
 </script>

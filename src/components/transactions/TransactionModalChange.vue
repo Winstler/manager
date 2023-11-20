@@ -1,5 +1,5 @@
 <template>
-        <ion-header>
+    <ion-header>
             <ion-toolbar>
               <ion-buttons slot="start">
                 <ion-button color="medium" @click="cancel">Назад</ion-button>
@@ -32,44 +32,82 @@
                 </ion-item>
                 <ion-item>
                     <ion-input label-placement="stacked" label="Сума операції" type="number" v-model = "obj.sum"></ion-input>
+
                 </ion-item>
+                <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
+                <ion-alert
+                  trigger="present-alert"
+                  header="Ви впевнені?"
+                  :message= "`Ви дійсно хочете видалити транзакцію?`" 
+                  :buttons="alertButtons"
+                ></ion-alert>
             </ion-list>
         </ion-content>
-</template>
-<script setup>
-  import { IonHeader, IonToolbar, IonContent, IonList, IonItem, IonModal, IonButtons, IonButton, IonSelect, IonSelectOption, IonIcon, modalController, IonInput, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
-  import { card } from 'ionicons/icons';
-  import { ref, onMounted, computed  } from 'vue';
-  import { useAccountsStore } from '@/stores/accountsStore'
+  </template>
+  
+  <script setup>
+    import {
+      IonContent,
+      IonHeader,
+      IonTitle,
+      IonToolbar,
+      IonButtons,
+      IonButton,
+      IonItem,
+      IonInput,
+      modalController,
+      IonAlert,
+      IonIcon,
+      IonSegment,
+      IonList,
+      IonSegmentButton,
+      IonSelect,
+      IonLabel,
+      IonSelectOption
+    } from '@ionic/vue';
+    import { trash } from 'ionicons/icons';
+    import { ref, computed } from 'vue';
+
+    import { useAccountsStore } from '@/stores/accountsStore'
   const accountsStore = useAccountsStore();
+  accountsStore.getAccounts()
+
   import { useCategoriesStore} from "@/stores/categoriesStore"
   const categoriesStore = useCategoriesStore();
+categoriesStore.getCategories()
 
-  function compareWith(o1, o2) {
-        return o1 && o2 ? o1.id === o2.id : o1 === o2;
-  }
+const selectedSegment = ref('default')
+const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
 
-  const obj = ref({
-    currentAccount: "",
-    sum: 0,
-    categorie: "",
-  })
-  accountsStore.getAccounts()
-  const cancel = () => modalController.dismiss(null, 'cancel');
-  const confirm = () => {
-    if(obj.value.sum === 0){
-      modalController.dismiss(null, 'dismiss')
-    }
-    if(obj.value.sum > 0 && selectedSegment.value === "default"){
-      obj.value.sum *= -1 
-    }
-    else if(obj.value.sum < 0 && selectedSegment.value === "income"){
-      obj.value.sum *= -1 
-    }
-    modalController.dismiss(obj, 'confirm')
-  };
-
-  const selectedSegment = ref("default");
-  const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
-
-</script>
+    const props = defineProps({
+        transactionId: String,
+        categorieId: String,
+        accountSum: Number,
+        accountId: String
+    })
+    const obj = ref({
+      name: props.accountName,
+      sum: props.accountSum,
+      id: props.transactionId,
+      currency: "$"
+    })
+    
+    const cancel = () => modalController.dismiss(null, 'cancel');
+    const confirm = () => modalController.dismiss(null, 'confirm');
+    const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete');
+    const alertButtons = [
+    {
+      text: 'Назад',
+      role: 'cancel',
+    },
+    {
+      text: 'OK',
+      role: 'Підтвердити',
+      handler: () => {
+        console.log(obj.value.id);
+        deleteEvent()
+      },
+    },
+    ];
+    
+  </script>
