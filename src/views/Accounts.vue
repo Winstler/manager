@@ -2,7 +2,7 @@
     <ion-page>
       <ion-header>
         <ion-toolbar>
-          <ion-title> Total balance:</ion-title>
+          <ion-title>Баланс:</ion-title>
           <ion-title slot = "end" :class = "totalSum >= 0 ? 'text-green-500' : 'text-red-500'" >{{ totalSum }}$</ion-title>
         </ion-toolbar>
       </ion-header>
@@ -14,7 +14,7 @@
           {{ accountsStore.error }}
         </ion-item>
 
-        <h2>Your accounts</h2>
+        <h2>Ваші рахунки</h2>
         <ion-list class="rounded-xl">
           <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
           <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum)" style ="flex items-center">
@@ -54,7 +54,7 @@
 
   const infoMessage = computed(() => {
     if(accountsStore.accounts.length == 0){
-      return "You don't have any accounts yet"
+      return "У вас ще немає рахунків."
     }
   });
 

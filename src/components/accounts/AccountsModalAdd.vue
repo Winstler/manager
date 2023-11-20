@@ -2,20 +2,20 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button color="medium" @click="cancel">Cancel</ion-button>
+          <ion-button color="medium" @click="cancel">Назад</ion-button>
         </ion-buttons>
-        <ion-title>New account</ion-title>
+        <ion-title>Новий рахунок</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="confirm" :strong="true">Confirm</ion-button>
+          <ion-button @click="confirm" :strong="true">Підтвердити</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
       <ion-item>
-        <ion-input label-placement="stacked" label="Enter account name" v-model="obj.name" placeholder="Credit card"></ion-input>
+        <ion-input label-placement="stacked" label="Введіть ім'я рахунку" v-model="obj.name" placeholder="Кредитна картка"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input  label-placement="stacked" label="Enter the amount of money" v-model = "obj.sum" type="number" placeholder="0 $"></ion-input>
+        <ion-input  label-placement="stacked" label="Введіть стан рахунку" v-model = "obj.sum" type="number" placeholder="0 грн."></ion-input>
       </ion-item>
     </ion-content>
   </template>

@@ -2,26 +2,26 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-button color="medium" @click="cancel">Cancel</ion-button>
+          <ion-button color="medium" @click="cancel">Назад</ion-button>
         </ion-buttons>
-        <ion-title>Edit account</ion-title>
+        <ion-title>Редагувати рахунок</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="confirm" :strong="true">Confirm</ion-button>
+          <ion-button @click="confirm" :strong="true">Підтвердити</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
       <ion-item>
-        <ion-input label-placement="stacked" label="Enter account name" v-model="obj.name" placeholder="Credit card"></ion-input>
+        <ion-input label-placement="stacked" label="Введіть ім'я рахунку" v-model="obj.name" placeholder="Кредитна картка"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input label-placement="stacked" label="Enter the amount of money" v-model = "obj.sum" type="number" placeholder="0$"></ion-input>
+        <ion-input label-placement="stacked" label="Введіть стан рахунку" v-model = "obj.sum" type="number" placeholder="0$"></ion-input>
       </ion-item>
-      <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Delete</ion-button>
+      <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
       <ion-alert
         trigger="present-alert"
-        header="Are you sure?"
-        :message= "`Do you realy want to delete ${obj.name} and all transactions with it?`" 
+        header="Ви впевнені?"
+        :message= "`Ви дійсно хочете видалити рахунок ${obj.name} та всі транзакції з ним?`" 
         :buttons="alertButtons"
       ></ion-alert>
     </ion-content>
@@ -60,12 +60,12 @@
     const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete');
     const alertButtons = [
     {
-      text: 'Cancel',
+      text: 'Назад',
       role: 'cancel',
     },
     {
       text: 'OK',
-      role: 'confirm',
+      role: 'Підтвердити',
       handler: () => {
         deleteEvent()
       },

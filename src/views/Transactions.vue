@@ -2,7 +2,7 @@
     <ion-page>
       <ion-header>
         <ion-toolbar>
-          <ion-title> Total balance:</ion-title>
+          <ion-title>Баланс:</ion-title>
 
         </ion-toolbar>
       </ion-header>
@@ -52,7 +52,7 @@ categoriesStore.getCategories()
 
   const infoMessage = computed(() => {
     if(transactionsStore.transactions.length == 0){
-      return "You don't have any transactions yet"
+      return "У вас ще немає транзакцій"
     }
   });
 
