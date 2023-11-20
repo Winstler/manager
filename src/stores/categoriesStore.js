@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { generateUniqueId, getData, addData } from '../indexedDB'
+import { generateUniqueId, getData, addData, generateRandomColor } from '../indexedDB'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => ({
@@ -11,13 +11,13 @@ export const useCategoriesStore = defineStore('categories', {
   actions: {
     async setCategories(){
       const categoriesList = [
-        {id: generateUniqueId(), name: "Продукти", isExpense: true},
-        {id: generateUniqueId(), name: "Ресторани та кафе", isExpense: true},
-        {id: generateUniqueId(), name: "Транспорт", isExpense: true},
-        {id: generateUniqueId(), name: "Відпочинок", isExpense: true},
-        {id: generateUniqueId(), name: "Покупки", isExpense: true},
-        {id: generateUniqueId(), name: "Зарплата", isExpense: false},
-        {id: generateUniqueId(), name: "Карманні гроші", isExpense: false},
+        {id: generateUniqueId(), name: "Продукти", isExpense: true, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Ресторани та кафе", isExpense: true, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Транспорт", isExpense: true, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Відпочинок", isExpense: true, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Покупки", isExpense: true, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Зарплата", isExpense: false, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Карманні гроші", isExpense: false, color: generateRandomColor()},
       ];
       categoriesList.forEach((item) => addData("categories", item))
     },

@@ -123,5 +123,7 @@ function generateUniqueId() {
   return timestamp + randomValue;
 }
 
-
-export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, generateUniqueId, deleteAllRecordWithConditions }
+function generateRandomColor(){
+  return "#" + Math.floor(Math.random()*16777215).toString(16);
+}
+export {openDatabase, getData, addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, generateUniqueId, deleteAllRecordWithConditions, generateRandomColor }

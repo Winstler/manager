@@ -44,11 +44,11 @@ import { generateUniqueId } from '../../indexedDB';
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => {
+      obj.value.sum = Number(obj.value.sum);
       if (!obj.value.name){
-        console.log(obj.value.sum)
         obj.value.name = "New account";
       }
-      if(obj.value.sum === null){
+      if(isNaN(obj.value.sum) || obj.value.sum === null){
         obj.value.sum = 0;
       }
       modalController.dismiss(obj, 'confirm')

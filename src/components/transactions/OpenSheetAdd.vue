@@ -11,12 +11,12 @@
         </ion-header>
         <ion-content class="ion-padding">
             <ion-list>
-                <ion-segment v-model="selectedSegment">
+                <ion-segment v-model="selectedSegment" :color = "computedColor">
                     <ion-segment-button value="default">
-                      <ion-label>Витрати</ion-label>
+                      <ion-label>Витрата</ion-label>
                     </ion-segment-button>
-                    <ion-segment-button value="income">
-                      <ion-label>Доходи</ion-label>
+                    <ion-segment-button value="income" >
+                      <ion-label>Дохід</ion-label>
                     </ion-segment-button>
                   </ion-segment>
                 <ion-item>
@@ -39,7 +39,7 @@
 <script setup>
   import { IonHeader, IonToolbar, IonContent, IonList, IonItem, IonModal, IonButtons, IonButton, IonSelect, IonSelectOption, IonIcon, modalController, IonInput, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
   import { card } from 'ionicons/icons';
-  import { ref, onMounted  } from 'vue';
+  import { ref, onMounted, computed  } from 'vue';
   import { useAccountsStore } from '@/stores/accountsStore'
   const accountsStore = useAccountsStore();
   import { useCategoriesStore} from "@/stores/categoriesStore"
@@ -57,8 +57,16 @@
   accountsStore.getAccounts()
   const cancel = () => modalController.dismiss(null, 'cancel');
   const confirm = () => {
+    if(obj.value.sum > 0 && selectedSegment.value === "default"){
+      obj.value.sum *= -1 
+    }
+    else if(obj.value.sum < 0 && selectedSegment.value === "income"){
+      obj.value.sum *= -1 
+    }
     modalController.dismiss(obj, 'confirm')
   };
 
   const selectedSegment = ref("default");
+  const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
+
 </script>

@@ -2,7 +2,7 @@
     <ion-page>
       <ion-header>
         <ion-toolbar>
-          <ion-segment v-model="selectedSegment">
+          <ion-segment v-model="selectedSegment" :color = "computedColor">
           <ion-segment-button value="default">
             <ion-label>Витрати</ion-label>
           </ion-segment-button>
@@ -21,7 +21,7 @@
   
   <script setup>
     import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, computed } from 'vue';
     import PieChartExpenses from '../components/analytics/expensesChart.vue'
     import PieChartIncome from '../components/analytics/incomeChart.vue'
 
@@ -33,4 +33,6 @@
     const categoriesStore = useCategoriesStore();
     
     const selectedSegment = ref("default")
+    const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
+
   </script>

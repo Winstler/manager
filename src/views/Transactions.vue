@@ -71,18 +71,19 @@ categoriesStore.getCategories()
         id: generateUniqueId(),
         account: data.value.currentAccount.replace(/"/g, ""),
         accountName: accountsStore.accounts[accountIndex].name, 
-        sum: data.value.sum,
+        sum: Number(data.value.sum),
         currency: "$",
         categorieId: data.value.categorie.replace(/"/g, ""), 
         categorie: categoriesStore.categories[categorieIndex].name,
-        created: Date.now()
+        created: Date.now(),
+        color: categoriesStore.categories[categorieIndex].color,
       };
       transactionsStore.transactions.unshift(transaction);
       
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
 
-      accountsStore.accounts[accountIndex].sum += transaction.sum;
+      accountsStore.accounts[accountIndex].sum += Number(transaction.sum);
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
     }
   };

@@ -27,7 +27,7 @@
     computed: {
       chartData() { return {
         labels: transactionsStore.expensesCategoryLabels,
-        datasets: [ {backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+        datasets: [ {backgroundColor: transactionsStore.getColorsExpense,
                     data: transactionsStore.expensesStats
             }
         ]

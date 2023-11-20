@@ -118,6 +118,40 @@ export const useTransactionsStore = defineStore('transactions', {
 
     return expenseLabelsArray;
 },
+  getColorsExpense(){
+    const uniqueExpenseColors = new Set();
+
+    // Собираем уникальные метки категорий
+    this.transactions.forEach((transaction) => {
+      const categorySum = Number(transaction.sum);
+
+      if (categorySum < 0) {
+        uniqueExpenseColors.add(transaction.color);
+      }
+    });
+
+    // Преобразуем Set в массив
+    const expenseColorsArray = Array.from(uniqueExpenseColors);
+
+    return expenseColorsArray;
+  },
+  getColorsIncome(){
+    const uniqueIncomeColors = new Set();
+
+    // Собираем уникальные метки категорий
+    this.transactions.forEach((transaction) => {
+      const categorySum = Number(transaction.sum);
+
+      if (categorySum > 0) {
+        uniqueIncomeColors.add(transaction.color);
+      }
+    });
+
+    // Преобразуем Set в массив
+    const incomeColorsArray = Array.from(uniqueIncomeColors);
+
+    return incomeColorsArray;
+  }
 }
   
 })
