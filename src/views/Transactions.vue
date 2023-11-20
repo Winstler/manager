@@ -15,7 +15,8 @@
         </ion-item>
         <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
         <ion-list class = "rounded-xl">
-          <ion-item v-for = "transaction in transactionsStore.transactions" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
+          <ion-item class = "flex-row" v-for = "transaction in transactionsStore.transactions" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
+            <div class = "h-10 w-10 rounded-full mr-2" :style = "{ backgroundColor: transaction.color}"></div>
             <ion-label>
               <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }}</div></h2>
               <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
@@ -59,6 +60,7 @@ categoriesStore.getCategories()
   });
 
   const openSheet = async () => {
+    //if (accountsStore.accounts.length === 0)
     const modal = await modalController.create({
       component: OpenSheetAdd,
         initialBreakpoint: 0.5,

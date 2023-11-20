@@ -11,13 +11,13 @@ export const useCategoriesStore = defineStore('categories', {
   actions: {
     async setCategories(){
       const categoriesList = [
-        {id: generateUniqueId(), name: "Продукти", isExpense: true, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Ресторани та кафе", isExpense: true, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Транспорт", isExpense: true, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Відпочинок", isExpense: true, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Покупки", isExpense: true, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Зарплата", isExpense: false, color: generateRandomColor()},
-        {id: generateUniqueId(), name: "Карманні гроші", isExpense: false, color: generateRandomColor()},
+        {id: generateUniqueId(), name: "Продукти", isExpense: true, color: "#4287f5"},
+        {id: generateUniqueId(), name: "Ресторани та кафе", isExpense: true, color: "#f73b61"},
+        {id: generateUniqueId(), name: "Транспорт", isExpense: true, color: "#1e1785"},
+        {id: generateUniqueId(), name: "Відпочинок", isExpense: true, color: "#faf734"},
+        {id: generateUniqueId(), name: "Покупки", isExpense: true, color: "#9e7316"},
+        {id: generateUniqueId(), name: "Зарплата", isExpense: false, color: "#5deb36"},
+        {id: generateUniqueId(), name: "Карманні гроші", isExpense: false, color: "#339618"},
       ];
       categoriesList.forEach((item) => addData("categories", item))
     },

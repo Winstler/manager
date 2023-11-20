@@ -12,7 +12,7 @@ export const useTransactionsStore = defineStore('transactions', {
         try{
           const data = await getData("transactions");
           data.forEach(element => {
-            this.transactions.push(element);
+            this.transactions.unshift(element);
           });
         }
         catch(err){
