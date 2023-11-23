@@ -3,7 +3,7 @@ import { getData } from '../indexedDB'
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    currency: {displayedCurrency: "₴", list: ["$", "€", "₴", "£", "₪"]},
+    settings: [{displayedCurrency: "₴", list: ["$", "€", "₴", "£", "₪"]}],
     error: "",
   }),
   actions: {

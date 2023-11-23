@@ -18,7 +18,7 @@
         <h2>Налаштування</h2>
         <ion-list class = "rounded-xl pr-4">
           <ion-select class = "pl-5" v-model="selectedCurrency" justify="space-between" label="Виберіть валюту"  @ionChange="updateCurrency">
-              <ion-select-option :value="currency" v-for = "currency in settingsStore.currency.list">{{currency}}</ion-select-option>
+              <ion-select-option :value="currency" v-for = "currency in settingsStore.settings[0].list">{{currency}}</ion-select-option>
           </ion-select>
         </ion-list>
       </ion-content>
@@ -42,10 +42,10 @@ const settingsStore = useSettingsStore();
 
 const updateCurrency = (event) => {
   // Применяем replace к значению, десериализованному из JSON.stringify
-  settingsStore.currency.displayedCurrency = event.detail.value.replace(/['"]+/g, '');
+  settingsStore.settings[0].displayedCurrency = event.detail.value.replace(/['"]+/g, '');
 };
 
-const selectedCurrency = ref(settingsStore.currency.list[1]);
+const selectedCurrency = ref(settingsStore.settings[0].displayedCurrency);
 
 const isOpen = ref(false);
 const setOpen = (state) => {

@@ -153,5 +153,4 @@ export const useTransactionsStore = defineStore('transactions', {
     return incomeColorsArray;
   }
 }
-  
 })
