@@ -27,7 +27,7 @@ import '@ionic/vue/css/display.css';
 
 const app = createApp(App)
 .use(createPinia())
-.use(IonicVue)
+.use(IonicVue, /*{mode: 'ios'}*/)
 .use(router)
 
 

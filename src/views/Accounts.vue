@@ -3,7 +3,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-title>Баланс:</ion-title>
-          <ion-title slot = "end" :class = "totalSum >= 0 ? 'text-green-500' : 'text-red-500'" >{{ totalSum }}$</ion-title>
+          <ion-title slot = "end" :class = "totalSum >= 0 ? 'text-green-500' : 'text-red-500'" >{{ totalSum }} {{ settingsStore.currency.displayedCurrency }}</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -20,7 +20,7 @@
           <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum)" style ="flex items-center">
             <ion-icon slot = "start" :icon = "card" ></ion-icon>
             <ion-label class="px-2"> {{account.name}} </ion-label>
-            <ion-label slot="end"> <span  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ account.currency }}</span></ion-label>
+            <ion-label slot="end"> <span  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ settingsStore.currency.displayedCurrency }}</span></ion-label>
           </ion-item>
         </ion-list>
 
@@ -51,6 +51,9 @@
   import { useTransactionsStore } from '../stores/transactionsStore'
   const transactionsStore = useTransactionsStore();
   transactionsStore.getTransactions()
+
+  import { useSettingsStore} from "@/stores/settingsStore"
+const settingsStore = useSettingsStore();
 
   const infoMessage = computed(() => {
     if(accountsStore.accounts.length == 0){

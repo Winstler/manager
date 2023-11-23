@@ -20,5 +20,12 @@ export const useAccountsStore = defineStore('accounts', {
         }
     }
     }
+  },
+  getters: {
+    totalBalance(){
+      let sum = 0;
+      this.accounts.map((acc) => sum += Number(acc.sum));
+      return sum;
+    }
   }
 })

@@ -3,7 +3,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-title>Баланс:</ion-title>
-
+          <ion-title slot = "end" :class = "accountsStore.totalBalance >= 0 ? 'text-green-500' : 'text-red-500'" >{{ accountsStore.totalBalance }} {{ settingsStore.currency.displayedCurrency }}</ion-title>
         </ion-toolbar>
       </ion-header>
 
@@ -18,7 +18,7 @@
           <ion-item class = "flex-row" v-for = "transaction in transactionsStore.transactions" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
             <div class = "h-10 w-10 rounded-full mr-2" :style = "{ backgroundColor: transaction.color}"></div>
             <ion-label>
-              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }}</div></h2>
+              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }} {{ settingsStore.currency.displayedCurrency.replace(/['"]+/g, '') }}</div></h2>
               <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
             </ion-label>
           </ion-item>
@@ -53,6 +53,9 @@
   const categoriesStore = useCategoriesStore();
 categoriesStore.getCategories()
 
+import { useSettingsStore} from "@/stores/settingsStore"
+const settingsStore = useSettingsStore();
+
   const infoMessage = computed(() => {
     if(transactionsStore.transactions.length == 0){
       return "У вас ще немає транзакцій"
@@ -79,7 +82,7 @@ categoriesStore.getCategories()
         currency: "$",
         categorieId: data.value.categorie.replace(/"/g, ""), 
         categorie: categoriesStore.categories[categorieIndex].name,
-        created: Date.now(),
+        created: data.value.selectedDate,
         color: categoriesStore.categories[categorieIndex].color,
       };
       transactionsStore.transactions.unshift(transaction);
@@ -113,8 +116,11 @@ categoriesStore.getCategories()
       updateData("accounts", unwraped)
     }*/
     if(role === "delete"){
-      deleteObjectInArray(transactionsStore.transactions, data);
-      deleteRecordById("transactions", data);
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
+      accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
+      deleteObjectInArray(transactionsStore.transactions, data.value.id);
+      deleteRecordById("transactions", data.value.id);
     }
   };
 

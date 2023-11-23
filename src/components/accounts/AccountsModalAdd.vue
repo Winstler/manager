@@ -40,7 +40,6 @@ import { generateUniqueId } from '../../indexedDB';
       name: "",
       sum: null,
       id: generateUniqueId(),
-      currency: "$"
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => {

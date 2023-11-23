@@ -1,8 +1,8 @@
 <template>
     <ion-page>
-      <ion-tabs>
+      <ion-tabs id = "tabs">
         <ion-router-outlet></ion-router-outlet>
-        <ion-tab-bar  class = "rounded-t-xl" slot="bottom">
+        <ion-tab-bar  class = "rounded-t-xl" slot="bottom" >
           <ion-tab-button tab="accounts" href="/accounts">
             <ion-icon :icon="card" />
             <ion-label>Рахунки</ion-label>

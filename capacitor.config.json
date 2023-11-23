@@ -1,6 +1,6 @@
 {
-  "appId": "com.manager",
-  "appName": "manager",
+  "appId": "com.winstler.managable",
+  "appName": "Managable",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

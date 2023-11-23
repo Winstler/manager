@@ -89,12 +89,13 @@ const computedColor = computed(() => selectedSegment.value == "default" ? "dange
       name: props.accountName,
       sum: props.accountSum,
       id: props.transactionId,
-      currency: "$"
+      currency: "$",
+      accountId: props.accountId
     })
     
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => modalController.dismiss(null, 'confirm');
-    const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete');
+    const deleteEvent = () => modalController.dismiss(obj, 'delete');
     const alertButtons = [
     {
       text: 'Назад',

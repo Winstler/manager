@@ -48,7 +48,7 @@ import { generateUniqueId , generateRandomColor} from '../../indexedDB';
     const obj = ref({
       name: "",
       color: generateRandomColor(),
-      isExpense: computed(() => selectedSegment === 'default' ? false : true)
+      isExpense: computed(() => selectedSegment.value === 'default' ? true : false)
     })
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => {
