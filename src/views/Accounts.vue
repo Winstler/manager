@@ -17,10 +17,12 @@
         <h2>Ваші рахунки</h2>
         <ion-list class="rounded-xl">
           <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
-          <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum)" style ="flex items-center">
-            <ion-icon slot = "start" :icon = "card" ></ion-icon>
+          <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum, account.type, account.creditLimit)" style ="flex items-center">
+            <ion-icon slot = "start" :icon = "account.type == 'credit' ? card : wallet" ></ion-icon>
             <ion-label class="px-2"> {{account.name}} </ion-label>
-            <ion-label slot="end"> <span  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ settingsStore.settings[0].displayedCurrency }}</span></ion-label>
+            <ion-label slot="end" class = "flex flex-col"> <div  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ settingsStore.settings[0].displayedCurrency }}</div>
+              <div  v-if = "account.creditLimit"  class = "text-green-500 italic"> {{account.sum < 0 ? account.creditLimit + account.sum : account.creditLimit}} {{ settingsStore.settings[0].displayedCurrency }}</div>
+            </ion-label>
           </ion-item>
         </ion-list>
 
@@ -36,7 +38,7 @@
   
 <script setup>
   import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel  } from '@ionic/vue';
-  import { add, card } from 'ionicons/icons';
+  import { add, card, wallet, cash} from 'ionicons/icons';
   import { computed} from 'vue';
 
   import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId} from '../indexedDB'
@@ -69,20 +71,22 @@ const settingsStore = useSettingsStore();
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      accountsStore.accounts.push({id: data.value.id, sum: data.value.sum, name: data.value.name, currency: "$"});
+      accountsStore.accounts.push(data.value);
       const unwraped = unwrapData(data.value);
       addData("accounts", unwraped);
     }
   };
 
-  const openModalChange = async (id, name, sum) => {
+  const openModalChange = async (id, name, sum, type, creditLimit) => {
     
     const modal = await modalController.create({
       component: AccountsModalChange,
       componentProps: {
         accountId: id,
         accountName: name,
-        accountSum: Number(sum)
+        accountSum: Number(sum),
+        accountType: type,
+        creditLimit: creditLimit
       },
     
     });

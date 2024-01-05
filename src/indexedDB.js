@@ -17,6 +17,7 @@ function openDatabase() {
         db.createObjectStore("accounts", { keyPath: 'id'});
         db.createObjectStore("transactions", { keyPath: 'id'});
         db.createObjectStore("categories", { keyPath: 'id'});
+        db.createObjectStore("settings", { keyPath: 'name'});
       };
     });
   }
