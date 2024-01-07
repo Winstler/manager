@@ -5,7 +5,7 @@
                 <ion-button color="medium" @click="cancel">Назад</ion-button>
               </ion-buttons>
               <ion-buttons slot="end">
-                <ion-button @click="confirm" :strong="true">Підтвердити</ion-button>
+                <ion-button @click="checkLimit" :strong="true">Підтвердити</ion-button>
               </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -41,12 +41,19 @@
                 </ion-item>
             </ion-list>
             <ion-alert
-    :is-open="isOpen"
+    :is-open="isOpenContinue"
     header="Видалити цю транзакцію?"
     message="Якщо ви вийдете, транзакція не збережиться."
-    :buttons="alertButtons"
-    @didDismiss="setOpen(false)">
+    :buttons="alertButtonsContinue"
+    @didDismiss="setOpenContinue(false)">
     </ion-alert>
+    
+    <ion-alert
+        :is-open="limitError"
+        header="Перевищен кредитний ліміт"
+        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе кредитний ліміт. Змініть дані та спробуйте знову."
+        :buttons="alertButtons"
+        @didDismiss="setOpen(false)"></ion-alert>
         </ion-content>
 </template>
 <script setup>
@@ -59,10 +66,11 @@
   import { useCategoriesStore} from "@/stores/categoriesStore"
   const categoriesStore = useCategoriesStore();
 
-  const updateSelect = (event, smth) => {
+  const updateSelect = (e, smth) => {
   // Применяем replace к значению, десериализованному из JSON.stringify
-  smth = event.detail.value.replace(/['"]+/g, '');
+  smth = e.replace(/['"]+/g, '');
 };
+
 
   const obj = ref({
     currentAccount: "",
@@ -70,8 +78,11 @@
     categorie: "",
     selectedDate: new Date().toISOString(),
   })
+  const setOpenContinue = (state) => {
+    isOpenContinue.value = state;
+  };
   const setOpen = (state) => {
-    isOpen.value = state;
+    limitError.value = state;
   };
   onMounted(() => {
     // Выполняется после монтирования компонента
@@ -87,7 +98,7 @@
       isOpen.value = true;
     }
   };
-  const confirm = () => {
+  const checkLimit = () => {
     if(obj.value.sum === 0){
       modalController.dismiss(null, 'dismiss')
     }
@@ -97,13 +108,25 @@
     else if(obj.value.sum < 0 && selectedSegment.value === "income"){
       obj.value.sum *= -1 
     }
+    const accountIndex = accountsStore.accounts.findIndex((item) => item.id == obj.value.currentAccount);
+      let accountSum = Number(accountsStore.accounts[accountIndex].sum);
+      let creditLimit = Number(accountsStore.accounts[accountIndex].creditLimit);
+      let type = accountsStore.accounts[accountIndex].type
+      console.log(accountSum, creditLimit, obj.value.sum)
+      if((accountSum + creditLimit) + obj.value.sum < 0){
+        limitError.value = true;
+      }
+      else confirm ()
+  }
+  const confirm = () => {
     modalController.dismiss(obj, 'confirm')
   };
 
   const selectedSegment = ref("default");
   const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
-  const isOpen = ref(false);
-  const alertButtons = [
+  const isOpenContinue = ref(false);
+  const limitError = ref(false);
+  const alertButtonsContinue = [
     {
       text: 'Продовжити редагування',
     },
@@ -116,7 +139,14 @@
       color: "danger"
     },
   ];
-
+  const alertButtons = [
+      {
+        text: "Ок",
+        handler: () => {
+          limitError.value = false;
+        },
+      }
+    ]
   const handleBackdropDismiss = () => {
     isOpen.value = true;
   };

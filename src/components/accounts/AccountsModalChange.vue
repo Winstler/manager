@@ -17,7 +17,7 @@
       </ion-item>
       <ion-item>
         <ion-input label-placement="stacked" label="Стан рахунку" v-model = "obj.sum" type="number" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
-        <ion-select v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку">
+        <ion-select v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку" >
           <ion-select-option value="normal">Звичайний</ion-select-option>
           <ion-select-option value="credit">Кредитна картка</ion-select-option>
         </ion-select>

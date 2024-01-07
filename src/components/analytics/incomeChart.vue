@@ -24,8 +24,10 @@
   export default {
     name: 'PieChart',
     components: { Pie },
+    props: { periodStart: Date, periodEnd: Date },
     computed: {
-      chartData() { return {
+      chartData() {  transactionsStore.getFilteredTransactions(this.periodStart, this.periodEnd) 
+        return {
         labels: transactionsStore.incomeCategoryLabels,
         datasets: [ {backgroundColor: transactionsStore.getColorsIncome,
                     data: transactionsStore.incomeStats

@@ -16,7 +16,7 @@
       </ion-item>
       <ion-item>
         <ion-input  label-placement="stacked" label="Стан рахунку" v-model = "obj.sum" type="number" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
-        <ion-select v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку">
+        <ion-select v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку" label = "stacked">
           <ion-select-option value="normal">Звичайний</ion-select-option>
           <ion-select-option value="credit">Кредитна картка</ion-select-option>
         </ion-select>
@@ -55,6 +55,15 @@ import { generateUniqueId } from '../../indexedDB';
 import { useSettingsStore} from "@/stores/settingsStore"
 const settingsStore = useSettingsStore();
     const limitError = ref(false);
+    const checkLimit = () => {
+      obj.value.sum = Number(obj.value.sum);
+      obj.value.creditLimit = Number(obj.value.creditLimit);
+      if(obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
+      if((obj.value.type == "normal" && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0) ){
+        limitError.value = true;
+      }
+      else confirm ()
+    }
     const alertButtons = [
       {
         text: "Ок",
@@ -73,15 +82,7 @@ const settingsStore = useSettingsStore();
       type: "normal",
       creditLimit: null,
     })
-    const checkLimit = () => {
-      obj.value.sum = Number(obj.value.sum);
-      obj.value.creditLimit = Number(obj.value.creditLimit);
-      if(obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
-      if((obj.value.type == "normal" && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0) ){
-        limitError.value = true;
-      }
-      else confirm ()
-    }
+    
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => {
       if (!obj.value.name){

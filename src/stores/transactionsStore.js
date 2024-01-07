@@ -5,6 +5,7 @@ export const useTransactionsStore = defineStore('transactions', {
   state: () => ({
     transactions: [],
     error: "",
+    filteredTransactions: [],
   }),
   actions: {
     async getTransactions(){
@@ -22,25 +23,36 @@ export const useTransactionsStore = defineStore('transactions', {
     },
     async getSumOfCategory(categoryId){
       let sum = 0;
-      this.transactions.map((item) =>{
+      this.filteredTransactions.map((item) =>{
         if (item.categorieId === categoryId){
           sum += Number(item.sum);
         }
       })
       return sum;
-    }
+    },
+    getFilteredTransactions(periodStart, periodEnd) {
+      this.filteredTransactions = [];
+      const filtered = this.transactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.created);
+        console.log(transactionDate >= new Date(periodStart))
+        return (transactionDate >= new Date(periodStart)) && (transactionDate <= new Date (periodEnd));
+      });
+      filtered.forEach(element => {
+        this.filteredTransactions.unshift(element);
+      });
+    },
   },
   getters: {
     getCategories() {
-      return this.transactions.map((t) => t.categorie);
+      return this.filteredTransactions.map((t) => t.categorie);
     },
     expensesStats(){
       const categoriesMap = {};
-
     // Агрегируем данные по категориям
-    this.transactions.forEach((transaction) => {
+    this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
       const categorySum = Number(transaction.sum);
+      const transactionTime = transaction.created
 
       if (categorySum < 0) {
       if (!categoriesMap[categoryId]) {
@@ -63,7 +75,7 @@ export const useTransactionsStore = defineStore('transactions', {
       const categoriesMap = {};
 
     // Агрегируем данные по категориям
-    this.transactions.forEach((transaction) => {
+    this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
       const categorySum = Number(transaction.sum);
 
@@ -88,7 +100,7 @@ export const useTransactionsStore = defineStore('transactions', {
       const uniqueExpenseLabels = new Set();
   
       // Собираем уникальные метки категорий
-      this.transactions.forEach((transaction) => {
+      this.filteredTransactions.forEach((transaction) => {
         const categorySum = Number(transaction.sum);
 
         if (categorySum < 0) {
@@ -105,7 +117,7 @@ export const useTransactionsStore = defineStore('transactions', {
     const uniqueExpenseLabels = new Set();
 
     // Собираем уникальные метки категорий
-    this.transactions.forEach((transaction) => {
+    this.filteredTransactions.forEach((transaction) => {
       const categorySum = Number(transaction.sum);
 
       if (categorySum > 0) {
@@ -122,7 +134,7 @@ export const useTransactionsStore = defineStore('transactions', {
     const uniqueExpenseColors = new Set();
 
     // Собираем уникальные метки категорий
-    this.transactions.forEach((transaction) => {
+    this.filteredTransactions.forEach((transaction) => {
       const categorySum = Number(transaction.sum);
 
       if (categorySum < 0) {
@@ -139,7 +151,7 @@ export const useTransactionsStore = defineStore('transactions', {
     const uniqueIncomeColors = new Set();
 
     // Собираем уникальные метки категорий
-    this.transactions.forEach((transaction) => {
+    this.filteredTransactions.forEach((transaction) => {
       const categorySum = Number(transaction.sum);
 
       if (categorySum > 0) {
