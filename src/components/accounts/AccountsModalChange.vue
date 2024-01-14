@@ -40,7 +40,7 @@
       <ion-alert
         trigger="present-alert"
         header="Ви впевнені?"
-        :message= "`Ви дійсно хочете видалити рахунок ${obj.name} та всі транзакції з ним?`" 
+        :message= "`Ви дійсно хочете видалити рахунок ${obj.name} та всі транзакції з ним?`"
         :buttons="alertButtonsDelete"
       ></ion-alert>
       <ion-alert
@@ -52,96 +52,95 @@
     </ion-alert>
     </ion-content>
   </template>
-  
-  <script setup>
-    import {
-      IonContent,
-      IonHeader,
-      IonTitle,
-      IonToolbar,
-      IonButtons,
-      IonButton,
-      IonItem,
-      IonInput,
-      modalController,
-      IonAlert,
-      IonIcon,
-      IonList,
-      IonLabel,
-      IonSelect,
-      IonSelectOption
-    } from '@ionic/vue';
-    import { trash } from 'ionicons/icons';
-    import { ref } from 'vue';
-    import { add, card } from 'ionicons/icons';
-    import { useTransactionsStore } from '@/stores/transactionsStore'
-  const transactionsStore = useTransactionsStore();
-  transactionsStore.getTransactions()
 
-  import { useSettingsStore} from "@/stores/settingsStore"
+<script setup>
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonItem,
+  IonInput,
+  modalController,
+  IonAlert,
+  IonIcon,
+  IonList,
+  IonLabel,
+  IonSelect,
+  IonSelectOption
+} from '@ionic/vue'
+import { trash, add, card } from 'ionicons/icons'
+import { ref } from 'vue'
+
+import { useTransactionsStore } from '@/stores/transactionsStore'
+
+import { useSettingsStore } from '@/stores/settingsStore'
+const transactionsStore = useTransactionsStore()
+transactionsStore.getTransactions()
 const settingsStore = useSettingsStore()
 
-    const props = defineProps({
-        accountId: String,
-        accountName: String,
-        accountSum: Number,
-        accountType: String,
-        creditLimit: Number
-    })
-    const obj = ref({
-      name: props.accountName,
-      sum: props.accountSum,
-      id: props.accountId,
-      type: props.accountType,
-      creditLimit: props.creditLimit,
-    })
-    const limitError = ref(false);
-    const alertButtons = [
-      {
-        text: "Ок",
-        handler: () => {
-          limitError.value = false;
-        },
-      }
-    ]
-    const setOpen = (state) => {
-      limitError.value = state;
-    };
-    const checkLimit = () => {
-      obj.value.sum = Number(obj.value.sum);
-      obj.value.creditLimit = Number(obj.value.creditLimit);
-      if(obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
-      if((obj.value.type == "normal" && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0) ){
-        limitError.value = true;
-      }
-      else confirm ()
+const props = defineProps({
+  accountId: String,
+  accountName: String,
+  accountSum: Number,
+  accountType: String,
+  creditLimit: Number
+})
+const obj = ref({
+  name: props.accountName,
+  sum: props.accountSum,
+  id: props.accountId,
+  type: props.accountType,
+  creditLimit: props.creditLimit
+})
+const limitError = ref(false)
+const alertButtons = [
+  {
+    text: 'Ок',
+    handler: () => {
+      limitError.value = false
     }
-    const cancel = () => modalController.dismiss(null, 'cancel');
-    const confirm = () => {
-      if (!obj.value.name){
-        obj.value.name = "Новий рахунок";
-      }
-      if(isNaN(obj.value.sum) || obj.value.sum === null){
-        obj.value.sum = 0;
-      }
-      if(obj.value.type == "normal"){
-        obj.value.creditLimit = 0;
-      }
-      modalController.dismiss(obj, 'confirm')
-    };
-    const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete');
-    const alertButtonsDelete = [
-    {
-      text: 'Назад',
-      role: 'cancel',
-    },
-    {
-      text: 'OK',
-      role: 'Підтвердити',
-      handler: () => {
-        deleteEvent()
-      },
-    },
-    ];
-    
-  </script>
+  }
+]
+const setOpen = (state) => {
+  limitError.value = state
+}
+const checkLimit = () => {
+  obj.value.sum = Number(obj.value.sum)
+  obj.value.creditLimit = Number(obj.value.creditLimit)
+  if (obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
+  if ((obj.value.type == 'normal' && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0)) {
+    limitError.value = true
+  } else confirm()
+}
+const cancel = () => modalController.dismiss(null, 'cancel')
+const confirm = () => {
+  if (!obj.value.name) {
+    obj.value.name = 'Новий рахунок'
+  }
+  if (isNaN(obj.value.sum) || obj.value.sum === null) {
+    obj.value.sum = 0
+  }
+  if (obj.value.type === 'normal') {
+    obj.value.creditLimit = 0
+  }
+  modalController.dismiss(obj, 'confirm')
+}
+const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete')
+const alertButtonsDelete = [
+  {
+    text: 'Назад',
+    role: 'cancel'
+  },
+  {
+    text: 'OK',
+    role: 'Підтвердити',
+    handler: () => {
+      deleteEvent()
+    }
+  }
+]
+
+</script>

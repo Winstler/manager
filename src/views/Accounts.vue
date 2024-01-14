@@ -7,7 +7,6 @@
         </ion-toolbar>
       </ion-header>
 
-
       <ion-content class="ion-padding" color="light">
 
         <ion-item v-if="accountsStore.error" class="text-red-400">
@@ -35,79 +34,76 @@
       </ion-content>
     </ion-page>
 </template>
-  
+
 <script setup>
-  import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel  } from '@ionic/vue';
-  import { add, card, wallet, cash} from 'ionicons/icons';
-  import { computed} from 'vue';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel } from '@ionic/vue'
+import { add, card, wallet, cash } from 'ionicons/icons'
+import { computed } from 'vue'
 
-  import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId} from '../indexedDB'
+import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId } from '../indexedDB'
 
-  import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue';
-  import AccountsModalChange from '@/components/accounts/AccountsModalChange.vue';
-  
-  import { useAccountsStore } from '../stores/accountsStore'
-  const accountsStore = useAccountsStore();
-  accountsStore.getAccounts()
+import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue'
+import AccountsModalChange from '@/components/accounts/AccountsModalChange.vue'
 
-  import { useTransactionsStore } from '../stores/transactionsStore'
-  const transactionsStore = useTransactionsStore();
-  transactionsStore.getTransactions()
+import { useAccountsStore } from '../stores/accountsStore'
 
-  import { useSettingsStore} from "@/stores/settingsStore"
-const settingsStore = useSettingsStore();
+import { useTransactionsStore } from '../stores/transactionsStore'
 
-  const infoMessage = computed(() => {
-    if(accountsStore.accounts.length == 0){
-      return "У вас ще немає рахунків."
-    }
-  });
+import { useSettingsStore } from '@/stores/settingsStore'
+const accountsStore = useAccountsStore()
+accountsStore.getAccounts()
+const transactionsStore = useTransactionsStore()
+transactionsStore.getTransactions()
+const settingsStore = useSettingsStore()
 
-
-  const openModalAdd = async () => {
-    const modal = await modalController.create({
-      component: AccountsModalAdd,
-    });
-    modal.present();
-    const { data, role } = await modal.onWillDismiss();
-    if (role === 'confirm') {
-      accountsStore.accounts.push(data.value);
-      const unwraped = unwrapData(data.value);
-      addData("accounts", unwraped);
-    }
-  };
-
-  const openModalChange = async (id, name, sum, type, creditLimit) => {
-    
-    const modal = await modalController.create({
-      component: AccountsModalChange,
-      componentProps: {
-        accountId: id,
-        accountName: name,
-        accountSum: Number(sum),
-        accountType: type,
-        creditLimit: creditLimit
-      },
-    
-    });
-    modal.present();
-    const { data, role } = await modal.onWillDismiss();
-    if (role === 'confirm') {
-      changeObjectInArray(accountsStore.accounts, data.value.id, data.value);
-      const unwraped = unwrapData(data.value);
-      updateData("accounts", unwraped)
-    }
-    else if(role === "delete"){
-      deleteObjectInArray(accountsStore.accounts, data);
-      deleteRecordById("accounts", data);
-      deleteAllTransactions(data);
-      deleteAllRecordWithConditions("transactions", "account", data)
-    }
-  };
-
-  function deleteAllTransactions(accountId){
-    const filteredArray = transactionsStore.transactions.filter((item) => item.account != accountId);
-    transactionsStore.transactions = filteredArray;
+const infoMessage = computed(() => {
+  if (accountsStore.accounts.length == 0) {
+    return 'У вас ще немає рахунків.'
   }
+})
+
+const openModalAdd = async () => {
+  const modal = await modalController.create({
+    component: AccountsModalAdd
+  })
+  modal.present()
+  const { data, role } = await modal.onWillDismiss()
+  if (role === 'confirm') {
+    accountsStore.accounts.push(data.value)
+    const unwraped = unwrapData(data.value)
+    addData('accounts', unwraped)
+  }
+}
+
+const openModalChange = async (id, name, sum, type, creditLimit) => {
+  const modal = await modalController.create({
+    component: AccountsModalChange,
+    componentProps: {
+      accountId: id,
+      accountName: name,
+      accountSum: Number(sum),
+      accountType: type,
+      creditLimit
+    }
+
+  })
+  modal.present()
+  const { data, role } = await modal.onWillDismiss()
+  if (role === 'confirm') {
+    changeObjectInArray(accountsStore.accounts, data.value.id, data.value)
+    const unwraped = unwrapData(data.value)
+    updateData('accounts', unwraped)
+  } else if (role === 'delete') {
+    deleteObjectInArray(accountsStore.accounts, data)
+    deleteRecordById('accounts', data)
+    deleteAllTransactions(data)
+    deleteAllRecordWithConditions('transactions', 'account', data)
+  }
+}
+
+function deleteAllTransactions (accountId) {
+  const filteredArray = transactionsStore.transactions.filter((item) => item.account != accountId)
+  transactionsStore.transactions = filteredArray
+}
 
 </script>

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-deprecated-slot-attribute -->
 <template>
     <ion-header>
       <ion-toolbar>
@@ -33,68 +34,66 @@
     </ion-alert>
     </ion-content>
   </template>
-  
-  <script setup>
-    import {
-      IonContent,
-      IonHeader,
-      IonTitle,
-      IonToolbar,
-      IonButtons,
-      IonButton,
-      IonItem,
-      IonInput,
-      modalController,
-      useBackButton ,
-      IonSelect,
-      IonSelectOption,
-      IonAlert
-    } from '@ionic/vue';
-    import { ref, onMounted  } from 'vue';
-import { generateUniqueId } from '../../indexedDB';
-import { useSettingsStore} from "@/stores/settingsStore"
-const settingsStore = useSettingsStore();
-    const limitError = ref(false);
-    const checkLimit = () => {
-      obj.value.sum = Number(obj.value.sum);
-      obj.value.creditLimit = Number(obj.value.creditLimit);
-      if(obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
-      if((obj.value.type == "normal" && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0) ){
-        limitError.value = true;
-      }
-      else confirm ()
+
+<script setup>
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonItem,
+  IonInput,
+  modalController,
+  IonSelect,
+  IonSelectOption,
+  IonAlert
+} from '@ionic/vue'
+import { ref } from 'vue'
+import { generateUniqueId } from '../../indexedDB'
+import { useSettingsStore } from '@/stores/settingsStore'
+const settingsStore = useSettingsStore()
+const limitError = ref(false)
+const checkLimit = () => {
+  obj.value.sum = Number(obj.value.sum)
+  obj.value.creditLimit = Number(obj.value.creditLimit)
+  if (obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
+  if ((obj.value.type === 'normal' && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0)) {
+    limitError.value = true
+  } else confirm()
+}
+const alertButtons = [
+  {
+    text: 'Ок',
+    handler: () => {
+      limitError.value = false
     }
-    const alertButtons = [
-      {
-        text: "Ок",
-        handler: () => {
-          limitError.value = false;
-        },
-      }
-    ]
-    const setOpen = (state) => {
-      limitError.value = state;
-    };
-    const obj = ref({
-      name: "",
-      sum: null,
-      id: generateUniqueId(),
-      type: "normal",
-      creditLimit: null,
-    })
-    
-    const cancel = () => modalController.dismiss(null, 'cancel');
-    const confirm = () => {
-      if (!obj.value.name){
-        obj.value.name = "Новий рахунок";
-      }
-      if(isNaN(obj.value.sum) || obj.value.sum === null){
-        obj.value.sum = 0;
-      }
-      if(obj.value.type == "normal"){
-        obj.value.creditLimit = 0;
-      }
-      modalController.dismiss(obj, 'confirm')
-    };
- 
-  </script>
+  }
+]
+const setOpen = (state) => {
+  limitError.value = state
+}
+const obj = ref({
+  name: '',
+  sum: null,
+  id: generateUniqueId(),
+  type: 'normal',
+  creditLimit: null
+})
+
+const cancel = () => modalController.dismiss(null, 'cancel')
+const confirm = () => {
+  if (!obj.value.name) {
+    obj.value.name = 'Новий рахунок'
+  }
+  if (isNaN(obj.value.sum) || obj.value.sum === null) {
+    obj.value.sum = 0
+  }
+  if (obj.value.type === 'normal') {
+    obj.value.creditLimit = 0
+  }
+  modalController.dismiss(obj, 'confirm')
+}
+
+</script>

@@ -26,7 +26,8 @@ export const useCategoriesStore = defineStore('categories', {
         try{
           let data = await getData("categories");
           if(data.length === 0){
-            this.setCategories()
+            console.log("categories have been set")
+            await this.setCategories()
             data = await getData("categories");
           }
           data.forEach(element => {
@@ -51,6 +52,7 @@ export const useCategoriesStore = defineStore('categories', {
     },
     filteredIncomes(){
       return this.categories.filter(category => !category.isExpense)
-    }
+    },
+
   }
 })
