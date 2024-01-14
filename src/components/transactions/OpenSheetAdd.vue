@@ -21,13 +21,13 @@
                     </ion-segment-button>
                   </ion-segment>
                 <ion-item>
-                  <ion-select v-model = "obj.currentAccount" justify="space-between" label="Виберіть рахунок" @ionChange="updateSelect($event.detail.value, obj.currentAccount)">
+                  <ion-select placeholder = "Виберіть рахунок" v-model = "obj.currentAccount" justify="space-between"  @ionChange="updateSelect($event.detail.value, obj.currentAccount)">
                     <ion-select-option :value="account.id" v-for = "account in accountsStore.accounts" :key = "account.id">{{account.name}}</ion-select-option>
                   </ion-select>
-                  <ion-select v-model = "obj.categorie" v-if = "selectedSegment == 'default'" justify="space-between" label="Виберіть категорію"   @ionChange="updateSelect($event.detail.value, obj.categorie)">
+                  <ion-select placeholder = "Виберіть категорію" v-model = "obj.categorie" v-if = "selectedSegment == 'default'" justify="space-between"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
                     <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredExpenses" :key = "categorie.id">{{categorie.name}}</ion-select-option>
                   </ion-select>
-                  <ion-select v-model = "obj.categorie" v-else justify="space-between" label="Виберіть категорію"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
+                  <ion-select placeholder = "Виберіть категорію" v-model = "obj.categorie" v-else justify="space-between" label="Виберіть категорію"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
                     <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredIncomes" :key = "categorie.id">{{categorie.name}}</ion-select-option>
                   </ion-select>
                 </ion-item>

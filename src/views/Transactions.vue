@@ -24,7 +24,7 @@
             v-for="transaction in transactions"
             :key="transaction.id"
             button
-            @click="openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)"
+            @click="openModalChange(transaction)"
           >
             <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: transaction.color }"></div>
             <ion-label>
@@ -64,7 +64,7 @@
   import { ref, computed, transformVNodeArgs } from 'vue';
   import OpenSheetAdd  from '@/components/transactions/OpenSheetAdd.vue'
 
-  import { generateUniqueId, unwrapData, addData, updateData, deleteObjectInArray, deleteRecordById } from "../indexedDB"
+  import { generateUniqueId, unwrapData, addData, updateData, deleteObjectInArray, deleteRecordById, changeObjectInArray } from "../indexedDB"
   
   import TransactionModalChange from '@/components/transactions/TransactionModalChange.vue';
   import AccountsModalAdd from '@/components/accounts/AccountsModalAdd.vue';
@@ -128,27 +128,54 @@ const settingsStore = useSettingsStore();
     }
   }
   };
-  const openModalChange = async (id, categorieId, sum, accountId, categorieName, accountName) => {
+  const openModalChange = async (t) => {
+    const pastSum = t.sum;
     
     const modal = await modalController.create({
       component: TransactionModalChange,
       initialBreakpoint: 0.5,
         breakpoints: [0.5, 1],
       componentProps: {
-        transactionId: id,
-        categorieId: categorieId,
-        accountSum: Number(sum),
-        accountId: accountId,
+        sum: Number(t.sum),
+        transactionId: t.id,
+        categorieId: t.categorieId,
+        accountId: t.account,
+        created: t.created
       },
     
     });
     modal.present();
     const { data, role } = await modal.onWillDismiss();
-    /*if (role === 'confirm') {
-      changeObjectInArray(accountsStore.accounts, data.value.id, data.value);
-      const unwraped = unwrapData(data.value);
-      updateData("accounts", unwraped)
-    }*/
+    if (role === 'confirm') {
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.accountId.replace(/"/g, ""));
+      accountsStore.accounts[accountIndex].sum -= Number(pastSum);
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
+      deleteObjectInArray(transactionsStore.transactions, data.transactionId);
+      deleteRecordById("transactions", data.transactionId);
+
+
+      const categorieIndex = categoriesStore.categories.findIndex((item) => item.id == data.categorieId.replace(/"/g, ""))
+      const transaction = {
+        id: data.transactionId,
+        account: data.accountId.replace(/"/g, ""),
+        accountName: accountsStore.accounts[accountIndex].name, 
+        sum: Number(data.sum),
+        categorieId: data.categorieId.replace(/"/g, ""), 
+        categorie: categoriesStore.categories[categorieIndex].name,
+        created: data.created,
+        color: categoriesStore.categories[categorieIndex].color,
+      };
+      
+      
+      transactionsStore.transactions.unshift(transaction);
+      
+      const unwraped = unwrapData(transaction);
+      addData("transactions", unwraped);
+
+      console.log(accountsStore.accounts[accountIndex].sum)
+      console.log(Number(transaction.sum))
+      accountsStore.accounts[accountIndex].sum += Number(transaction.sum);
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));    }
     if(role === "delete"){
       const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
       accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);

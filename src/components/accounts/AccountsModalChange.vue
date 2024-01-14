@@ -25,6 +25,10 @@
       <ion-item v-if = "obj.type == 'credit'">
         <ion-input type = "number" color = "danger" label-placement="stacked" label="Кредитний ліміт" v-model="obj.creditLimit" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
       </ion-item>
+      <ion-item v-if = "obj.type == 'credit'">
+        <ion-label slot="start">Залишок ліміту:</ion-label>
+        <ion-label slot="end" color = "success" class = "italic">{{ obj.sum < 0 ? Number(obj.creditLimit) + Number(obj.sum) + ' ' +settingsStore.settings[0].displayedCurrency : obj.creditLimit + ' ' + settingsStore.settings[0].displayedCurrency}}</ion-label>
+      </ion-item>
     </ion-list>
       <ion-button shape = "round" class = "mt-3" id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
       <h2 v-if = "transactionsStore.transactions.filter((t) => t.account === obj.id).length !== 0">Останні транзакції</h2>
