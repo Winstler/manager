@@ -91,6 +91,7 @@ const openModalChange = async (id, name, sum, type, creditLimit) => {
   const { data, role } = await modal.onWillDismiss()
   if (role === 'confirm') {
     changeObjectInArray(accountsStore.accounts, data.value.id, data.value)
+    
     const unwraped = unwrapData(data.value)
     updateData('accounts', unwraped)
   } else if (role === 'delete') {

@@ -7,6 +7,7 @@ export const useAccountsStore = defineStore('accounts', {
     error: "",
   }),
   actions: {
+    
     async getAccounts(){
       if(this.accounts.length === 0){
         try{

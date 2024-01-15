@@ -25,10 +25,10 @@
                     <ion-select-option :value="account.id" v-for = "account in accountsStore.accounts" :key = "account.id">{{account.name}}</ion-select-option>
                   </ion-select>
                   <ion-select placeholder = "Виберіть категорію" v-model = "obj.categorie" v-if = "selectedSegment == 'default'" justify="space-between"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
-                    <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredExpenses" :key = "categorie.id">{{categorie.name}}</ion-select-option>
+                    <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredExpensesForLists" :key = "categorie.id">{{categorie.name}}</ion-select-option>
                   </ion-select>
-                  <ion-select placeholder = "Виберіть категорію" v-model = "obj.categorie" v-else justify="space-between" label="Виберіть категорію"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
-                    <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredIncomes" :key = "categorie.id">{{categorie.name}}</ion-select-option>
+                  <ion-select placeholder = "Виберіть категорію" v-model = "obj.categorie" v-else justify="space-between"  @ionChange="updateSelect($event.detail.value, obj.categorie)">
+                    <ion-select-option :value="categorie.id" v-for = "categorie in categoriesStore.filteredIncomesForLists" :key = "categorie.id">{{categorie.name}}</ion-select-option>
                   </ion-select>
                 </ion-item>
                 <ion-item>
@@ -95,7 +95,10 @@ accountsStore.getAccounts()
 const cancel = () => {
 
 }
+
+const defaultCategory = computed(() => obj.value.sum < 0 ? "defaultExpense" : "defaultIncome")
 const checkLimit = () => {
+  obj.value.sum = Number(obj.value.sum).toFixed(2)
   if (obj.value.sum === 0) {
     modalController.dismiss(null, 'dismiss')
   }
@@ -104,9 +107,12 @@ const checkLimit = () => {
   } else if (obj.value.sum < 0 && selectedSegment.value === 'income') {
     obj.value.sum *= -1
   }
+  if(obj.value.categorie === '') {obj.value.categorie = defaultCategory.value} 
+  console.log(obj.value)
   const accountIndex = accountsStore.accounts.findIndex((item) => item.id === obj.value.currentAccount)
   const accountSum = Number(accountsStore.accounts[accountIndex].sum)
   const creditLimit = Number(accountsStore.accounts[accountIndex].creditLimit)
+  obj.value.sum = Number(obj.value.sum)
   console.log(accountSum, creditLimit, obj.value.sum)
   if ((accountSum + creditLimit) + obj.value.sum < 0) {
     limitError.value = true

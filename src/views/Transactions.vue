@@ -9,7 +9,6 @@
 
 
       <ion-content class="ion-padding" color="light">
-
         <ion-item v-if="transactionsStore.error" class="text-red-400">
           {{ transactionsStore.error }}
         </ion-item>
@@ -61,7 +60,7 @@
 <script setup>
   import { IonItemDivider,IonAlert, IonLabel, IonList, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonFab, IonFabButton, IonIcon, IonItem, modalController  } from '@ionic/vue';
   import { add, card } from 'ionicons/icons';
-  import { ref, computed, transformVNodeArgs } from 'vue';
+  import { ref, computed,  } from 'vue';
   import OpenSheetAdd  from '@/components/transactions/OpenSheetAdd.vue'
 
   import { generateUniqueId, unwrapData, addData, updateData, deleteObjectInArray, deleteRecordById, changeObjectInArray } from "../indexedDB"
@@ -81,8 +80,9 @@
   const categoriesStore = useCategoriesStore();
 categoriesStore.getCategories()
 
-import { useSettingsStore} from "@/stores/settingsStore"
+import { useSettingsStore } from "@/stores/settingsStore"
 const settingsStore = useSettingsStore();
+settingsStore.getSettings()
 
   const infoMessage = computed(() => {
     if(transactionsStore.transactions.length == 0){
@@ -123,7 +123,9 @@ const settingsStore = useSettingsStore();
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
 
+      accountsStore.accounts[accountIndex].sum = Number(accountsStore.accounts[accountIndex].sum);
       accountsStore.accounts[accountIndex].sum += Number(transaction.sum);
+      accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
     }
   }
@@ -172,16 +174,16 @@ const settingsStore = useSettingsStore();
       const unwraped = unwrapData(transaction);
       addData("transactions", unwraped);
 
-      console.log(accountsStore.accounts[accountIndex].sum)
-      console.log(Number(transaction.sum))
+      accountsStore.accounts[accountIndex].sum = Number(accountsStore.accounts[accountIndex].sum);
       accountsStore.accounts[accountIndex].sum += Number(transaction.sum);
+      accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));    }
     if(role === "delete"){
       const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
       accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
       deleteObjectInArray(transactionsStore.transactions, data.value.id);
-      deleteRecordById("transactions", data.value.id);
+      deleteRecordById("transactions", data.value.transactionId);
     }
   };
 

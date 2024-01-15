@@ -130,6 +130,7 @@ const confirm = () => {
   if (obj.value.type === 'normal') {
     obj.value.creditLimit = 0
   }
+  obj.value.sum = obj.value.sum.toFixed(2)
   modalController.dismiss(obj, 'confirm')
 }
 const deleteEvent = () => modalController.dismiss(obj.value.id, 'delete')

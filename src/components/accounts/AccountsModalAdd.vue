@@ -16,14 +16,14 @@
         <ion-input label-placement="stacked" label="Ім'я рахунку" v-model="obj.name" placeholder="Рахунок"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input  label-placement="stacked" label="Стан рахунку" v-model = "obj.sum" type="number" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
-        <ion-select v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку" label = "stacked">
+        <ion-input  label-placement="stacked" label="Стан рахунку"  v-model = "obj.sum" type="number"  :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
+        <ion-select label-placement="stacked" label = "Тип рахунку" v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку">
           <ion-select-option value="normal">Звичайний</ion-select-option>
           <ion-select-option value="credit">Кредитна картка</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item v-if = "obj.type == 'credit'">
-        <ion-input type = "number" color = "danger" label-placement="stacked" label="Кредитний ліміт" v-model="obj.creditLimit" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
+        <ion-input type = "number" color = "danger" label-placement="stacked"  label="Кредитний ліміт" v-model="obj.creditLimit" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
       </ion-item>
       <ion-alert
         :is-open="limitError"
@@ -93,6 +93,7 @@ const confirm = () => {
   if (obj.value.type === 'normal') {
     obj.value.creditLimit = 0
   }
+  obj.value.sum = obj.value.sum.toFixed(2)
   modalController.dismiss(obj, 'confirm')
 }
 

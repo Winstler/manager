@@ -109,7 +109,10 @@ const updateSelect = (e, smth) => {
     })
     
     const cancel = () => modalController.dismiss(null, 'cancel');
-    const confirm = () => modalController.dismiss(obj.value, 'confirm');
+    const confirm = () => {
+      obj.value.sum = Number(obj.value.sum).toFixed(2)
+      modalController.dismiss(obj.value, 'confirm')
+    };
     const deleteEvent = () => modalController.dismiss(obj, 'delete');
     const alertButtons = [
     {
@@ -120,7 +123,7 @@ const updateSelect = (e, smth) => {
       text: 'OK',
       role: 'Підтвердити',
       handler: () => {
-        console.log(obj.value.id);
+        console.log(obj.value.transactionId);
         deleteEvent()
       },
     },

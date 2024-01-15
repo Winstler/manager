@@ -33,7 +33,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonItem, IonLabel
 import { addCircle, trash } from 'ionicons/icons'
 import createCategoryModal from '@/components/more/CreateCategoryModal.vue'
 import { generateUniqueId, addData } from '@/indexedDB'
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import categories from '../components/more/categories.vue'
 
 import { useCategoriesStore } from '@/stores/categoriesStore'
@@ -42,10 +42,12 @@ categoriesStore.getCategories()
 
 import { useSettingsStore } from '@/stores/settingsStore'
 const settingsStore = useSettingsStore()
+settingsStore.getSettings();
 
+console.log(settingsStore.settings[0].list)
 const updateCurrency = (event) => {
-  // Применяем replace к значению, десериализованному из JSON.stringify
-  settingsStore.settings[0].displayedCurrency = event.detail.value.replace(/['"]+/g, '')
+  settingsStore.settings[0].displayedCurrency = event.detail.value.replace(/['"]+/g, '');
+  
 }
 
 const selectedCurrency = ref(settingsStore.settings[0].displayedCurrency)
@@ -78,8 +80,6 @@ const createCategory = async () => {
     setOpen(true)
   };
 }
-const deleteCategory = async () => {
 
-}
 
 </script>
