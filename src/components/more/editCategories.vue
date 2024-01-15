@@ -48,6 +48,7 @@
 import {
 IonAlert,
 IonList,
+IonIcon,
   IonContent,
   IonHeader,
   IonTitle,

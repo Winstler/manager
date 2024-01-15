@@ -242,3 +242,8 @@ settingsStore.getSettings()
   return sortedGrouped;
 });
 </script>
+<style>
+ion-item:last-child{
+  --border-style: none;
+}
+</style>

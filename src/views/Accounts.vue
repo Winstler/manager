@@ -14,23 +14,21 @@
         </ion-item>
 
         <h2>Ваші рахунки</h2>
-        <ion-list class="rounded-xl">
+        <ion-list class="rounded-xl py-4">
           <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
-          <ion-item  class = "my-4" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum, account.type, account.creditLimit)" style ="flex items-center">
+          <ion-item  class =  "mx-2 py-1" v-for="account in accountsStore.accounts"  button @click = "openModalChange(account.id, account.name, account.sum, account.type, account.creditLimit)" style ="flex items-center">
             <ion-icon slot = "start" :icon = "account.type == 'credit' ? card : wallet" ></ion-icon>
             <ion-label class="px-2"> {{account.name}} </ion-label>
             <ion-label slot="end" class = "flex flex-col"> <div  :class = "account.sum >= 0 ? 'text-green-500' : 'text-red-500'" > {{account.sum}} {{ settingsStore.settings[0].displayedCurrency }}</div>
-              <div  v-if = "account.creditLimit"  class = "text-green-500 italic"> {{account.sum < 0 ? account.creditLimit + account.sum : account.creditLimit}} {{ settingsStore.settings[0].displayedCurrency }}</div>
+              <div  v-if = "account.creditLimit && isFinite(account.creditLimit)"  class = "text-green-500 italic"> {{account.sum < 0 ? (Number(account.creditLimit) + Number(account.sum)).toFixed(2) : account.creditLimit}} {{ settingsStore.settings[0].displayedCurrency }}</div>
+            </ion-label>
+          </ion-item>
+          <ion-item class = "noBorder py-1" button @click = "openModalAdd"><div class = " flex items-center justify-center h-10 w-10 rounded-full mr-5 border-2 bg-slate-100" ><ion-icon class = "w-6 h-6 fill-slate-400 " :icon="addCircle"></ion-icon></div>
+            <ion-label>
+              <h2 class = "text-xl">Створити рахунок</h2>
             </ion-label>
           </ion-item>
         </ion-list>
-
-        <ion-fab @click = "openModalAdd"  class ="p-2" slot="fixed" vertical="bottom" horizontal="end">
-          <ion-fab-button>
-            <ion-icon :icon="add"></ion-icon>
-          </ion-fab-button>
-        </ion-fab>
-
       </ion-content>
       <ion-toast class = "-translate-y-14" :is-open="isOpen" :message="msg" :duration="3500"  @didDismiss="setOpen(false)" position-anchor="footer"></ion-toast>
     </ion-page>
@@ -38,7 +36,7 @@
 
 <script setup>
 import { IonToast, IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel } from '@ionic/vue'
-import { add, card, wallet, cash } from 'ionicons/icons'
+import { add, card, wallet, cash, addCircle} from 'ionicons/icons'
 import { computed , ref} from 'vue'
 
 import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId } from '../indexedDB'
@@ -76,8 +74,11 @@ const openModalAdd = async () => {
   modal.present()
   const { data, role } = await modal.onWillDismiss()
   if (role === 'confirm') {
+    console.log(data.value.creditLimit)
     accountsStore.accounts.push(data.value)
-    const unwraped = unwrapData(data.value)
+    let unwraped = unwrapData(data.value)
+    if(unwraped.creditLimit === null) unwraped.creditLimit = Infinity
+    console.log(unwraped)
     addData('accounts', unwraped)
   }
 }
@@ -137,3 +138,8 @@ function deleteAllTransactions (accountId) {
 }
 
 </script>
+<style>
+.noBorder{
+  --border-style: none;
+}
+</style>

@@ -11,20 +11,30 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" color ="light">
+      <ion-list class = "rounded-lg">
       <ion-item>
         <ion-input label-placement="stacked" label="Ім'я рахунку" v-model="obj.name" placeholder="Рахунок"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item >
         <ion-input  label-placement="stacked" label="Стан рахунку"  v-model = "obj.sum" type="number"  :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
         <ion-select label-placement="stacked" label = "Тип рахунку" v-model = "obj.type" aria-label="Тип рахунку" interface="popover" placeholder="Тип рахунку">
           <ion-select-option value="normal">Звичайний</ion-select-option>
-          <ion-select-option value="credit">Кредитна картка</ion-select-option>
+          <ion-select-option value="credit">З лімітом</ion-select-option>
+          <ion-select-option value="noLimit">Без обмежень</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item v-if = "obj.type == 'credit'">
         <ion-input type = "number" color = "danger" label-placement="stacked"  label="Кредитний ліміт" v-model="obj.creditLimit" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency"></ion-input>
       </ion-item>
+      <ion-item v-if = "obj.creditLimit">
+        <ion-label slot="start">Залишок ліміту:</ion-label>
+        <ion-label slot="end" :color = "limitColor" class = "italic">{{ obj.sum < 0 ? Number(obj.creditLimit) + Number(obj.sum) + ' ' +settingsStore.settings[0].displayedCurrency : obj.creditLimit + ' ' + settingsStore.settings[0].displayedCurrency}}</ion-label>
+      </ion-item>
+    </ion-list>
+      <div class = "bg-white mt-2 rounded-lg"><p v-if = "obj.type == 'normal'" class = "m-4 py-2 text-gray-500 text-sm">Баланс звичайного рахунку не може бути менше 0</p></div>
+      <div class = "bg-white mt-2 rounded-lg"><p v-if = "obj.type == 'credit'" class = "m-4 py-2 text-gray-500 text-sm">Рахунки з лімітом можуть мати баланс менше 0 при умові достатнього ліміту</p></div>
+      <div class = "bg-white mt-2 rounded-lg"><p v-if = "obj.type == 'noLimit'" class = "m-4 py-2 text-gray-500 text-sm">Цей рахунок не має жодних лімітів</p></div>
       <ion-alert
         :is-open="limitError"
         header="Перевищен кредитний ліміт"
@@ -36,7 +46,8 @@
   </template>
 
 <script setup>
-import {
+import {IonList,
+  IonLabel,
   IonContent,
   IonHeader,
   IonTitle,
@@ -50,7 +61,7 @@ import {
   IonSelectOption,
   IonAlert
 } from '@ionic/vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { generateUniqueId } from '../../indexedDB'
 import { useSettingsStore } from '@/stores/settingsStore'
 const settingsStore = useSettingsStore()
@@ -59,6 +70,10 @@ const checkLimit = () => {
   obj.value.sum = Number(obj.value.sum)
   obj.value.creditLimit = Number(obj.value.creditLimit)
   if (obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
+  if(obj.value.type === 'noLimit'){ 
+    console.log(5)
+    obj.value.creditLimit = Infinity
+  }
   if ((obj.value.type === 'normal' && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0)) {
     limitError.value = true
   } else confirm()
@@ -93,8 +108,16 @@ const confirm = () => {
   if (obj.value.type === 'normal') {
     obj.value.creditLimit = 0
   }
+  else if(obj.value.type === 'noLimit') obj.value.creditLimit = Infinity
   obj.value.sum = obj.value.sum.toFixed(2)
   modalController.dismiss(obj, 'confirm')
 }
+const avaibleLimit = computed (() => obj.value.sum < 0 ? Number(obj.value.creditLimit) + Number(obj.value.sum) : obj.value.creditLimit);
+const limitColor = computed (() => {
+ 
+  console.log(avaibleLimit.value)
+  if(avaibleLimit.value > 0) return "success"
+  else if (avaibleLimit.value < 0) return "danger"
 
+})
 </script>
