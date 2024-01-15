@@ -41,7 +41,8 @@ async function editCategory (c) {
       name: c.name,
       color: c.color,
       isExpense: c.isExpense
-    }
+    },
+    color: "light"
 
   })
   modal.present()

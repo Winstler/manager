@@ -11,7 +11,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" color="light">
         <ion-segment v-model="selectedSegment" :color = "computedColor">
             <ion-segment-button value="default">
               <ion-label>Для витрат</ion-label>
@@ -20,7 +20,7 @@
               <ion-label>Для доходів</ion-label>
             </ion-segment-button>
         </ion-segment>
-      <ion-item class = "flex-row">
+      <ion-item class = "flex-row rounded-b-xl">
         <input class = "mr-2" type="color" data-coloris v-model = "obj.color">
         <ion-input label-placement="stacked" label="Введіть ім'я категорії" v-model="obj.name" placeholder="Нова категорія"></ion-input>
       </ion-item>

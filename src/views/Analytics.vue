@@ -21,8 +21,8 @@
           </ion-segment-button>
         </ion-segment>
         </ion-toolbar>
-        <PieChartExpenses :periodStart = "periodStart" :periodEnd = "periodEnd" v-if="selectedSegment === 'default'"/>
-        <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-if="selectedSegment === 'income'"/>
+        <PieChartExpenses :periodStart = "periodStart" :periodEnd = "periodEnd" :currency = "settingsStore.settings[0].displayedCurrency" v-if="selectedSegment === 'default'"/>
+        <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-if="selectedSegment === 'income'" :currency = "settingsStore.settings[0].displayedCurrency"/>
 
       </ion-content>
     </ion-page>
@@ -34,6 +34,9 @@ import { onMounted, ref, computed } from 'vue'
 import PieChartExpenses from '../components/analytics/expensesChart.vue'
 import PieChartIncome from '../components/analytics/incomeChart.vue'
 
+import { useSettingsStore } from '@/stores/settingsStore'
+const settingsStore = useSettingsStore()
+settingsStore.getSettings();
 
 import { useTransactionsStore } from '../stores/transactionsStore'
 

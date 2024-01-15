@@ -11,7 +11,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding" color = "light">
         <ion-segment v-model="selectedSegment" :color = "computedColor">
             <ion-segment-button value="default">
               <ion-label>Для витрат</ion-label>
@@ -20,11 +20,21 @@
               <ion-label>Для доходів</ion-label>
             </ion-segment-button>
         </ion-segment>
-      <ion-item class = "flex-row">
+      <ion-item class = "flex-row rounded-b-xl">
         <input class = "mr-2" type="color" data-coloris v-model = "obj.color">
         <ion-input label-placement="stacked" label="Введіть ім'я категорії" v-model="obj.name" placeholder="Нова категорія"></ion-input>
       </ion-item>
       <ion-button shape = "round" class = "mt-3" id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
+      <h2 v-if = "transactionsStore.transactions.filter((t) => t.categorieId === obj.id).length !== 0">Останні транзакції</h2>
+      <ion-list v-if = "transactionsStore.transactions.filter((t) => t.categorieId === obj.id).length !== 0" class = "rounded-xl">
+          <ion-item class = "flex-row" v-for = "transaction in transactionsStore.transactions.filter((t) => t.categorieId === obj.id)" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
+            <div class = "h-10 w-10 rounded-full mr-2" :style = "{ backgroundColor: transaction.color}"></div>
+            <ion-label>
+              <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }} {{ settingsStore.settings[0].displayedCurrency }}</div></h2>
+              <p><ion-icon :icon="card"></ion-icon> {{ transaction.accountName }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
     </ion-content>
     <ion-alert
         trigger="present-alert"
@@ -37,6 +47,7 @@
 <script setup>
 import {
 IonAlert,
+IonList,
   IonContent,
   IonHeader,
   IonTitle,
@@ -52,8 +63,15 @@ IonAlert,
 } from '@ionic/vue'
 import { ref, computed } from 'vue'
 import { generateRandomColor } from '../../indexedDB'
-import { trash } from 'ionicons/icons'
+import { trash , card, wallet} from 'ionicons/icons'
 
+import { useTransactionsStore } from '@/stores/transactionsStore'
+  const transactionsStore = useTransactionsStore();
+  transactionsStore.getTransactions()
+
+  import { useSettingsStore } from "@/stores/settingsStore"
+const settingsStore = useSettingsStore();
+settingsStore.getSettings()
 const props = defineProps({
     id: String,
     name: String,
