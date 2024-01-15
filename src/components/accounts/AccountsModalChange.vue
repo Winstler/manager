@@ -93,6 +93,7 @@ const props = defineProps({
   creditLimit: Number
 })
 const obj = ref({
+  initialSum: props.accountSum,
   name: props.accountName,
   sum: props.accountSum,
   id: props.accountId,

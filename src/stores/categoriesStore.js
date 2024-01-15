@@ -11,6 +11,8 @@ export const useCategoriesStore = defineStore('categories', {
   actions: {
     async setCategories(){
       const categoriesList = [
+        {id: "correctionExpense", name: "Корекція", isExpense: true, color: "#495473"},
+        {id: "correctionIncome", name: "Корекція", isExpense: false, color: "#495473"},
         {id: "defaultExpense", name: "Без категорії", isExpense: true, color: "#8d9990"},
         {id: "defaultIncome", name: "Без категорії", isExpense: false, color: "#8d9990"},
         {id: generateUniqueId(), name: "Продукти", isExpense: true, color: "#4287f5"},
@@ -51,12 +53,12 @@ export const useCategoriesStore = defineStore('categories', {
     },
     filteredExpensesForLists(){
       return this.categories.filter((c) => {
-        if(c.isExpense && c.id != 'defaultExpense') return true
+        if(c.isExpense && c.id != 'defaultExpense' && c.id != 'correctionExpense') return true
       })
     },
     filteredIncomesForLists(){
       return this.categories.filter((c) => {
-        if(!c.isExpense && c.id != 'defaultIncome') return true
+        if(!c.isExpense && c.id != 'defaultIncome'  && c.id != 'correctionIncome') return true
       })
     },
     filteredExpenses(){

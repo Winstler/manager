@@ -32,13 +32,14 @@
         </ion-fab>
 
       </ion-content>
+      <ion-toast class = "-translate-y-14" :is-open="isOpen" :message="msg" :duration="3500"  @didDismiss="setOpen(false)" position-anchor="footer"></ion-toast>
     </ion-page>
 </template>
 
 <script setup>
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel } from '@ionic/vue'
+import { IonToast, IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonFab, IonFabButton, IonIcon, IonList, IonItem, modalController, IonLabel } from '@ionic/vue'
 import { add, card, wallet, cash } from 'ionicons/icons'
-import { computed } from 'vue'
+import { computed , ref} from 'vue'
 
 import { addData, unwrapData, changeObjectInArray, updateData, deleteObjectInArray, deleteRecordById, deleteAllRecordWithConditions, generateUniqueId } from '../indexedDB'
 
@@ -55,6 +56,12 @@ accountsStore.getAccounts()
 const transactionsStore = useTransactionsStore()
 transactionsStore.getTransactions()
 const settingsStore = useSettingsStore()
+
+const msg = ref("");
+const isOpen = ref(false)
+const setOpen = (state) => {
+  isOpen.value = state
+}
 
 const infoMessage = computed(() => {
   if (accountsStore.accounts.length == 0) {
@@ -91,7 +98,29 @@ const openModalChange = async (id, name, sum, type, creditLimit) => {
   const { data, role } = await modal.onWillDismiss()
   if (role === 'confirm') {
     changeObjectInArray(accountsStore.accounts, data.value.id, data.value)
-    
+    const correction = Number(data.value.sum) - Number(data.value.initialSum)
+    if(correction){
+      const category = correction < 0 ? "correctionExpense" : "correctionIncome";
+
+      const transaction = {
+        id: generateUniqueId(),
+        account: data.value.id.replace(/"/g, ""),
+        accountName: data.value.name, 
+        sum: correction,
+        categorieId: category, 
+        categorie: "Корекція",
+        created: Date.now(),
+        color: "#495473",
+      };
+      transactionsStore.transactions.unshift(transaction);
+      
+      const unwraped = unwrapData(transaction);
+      addData("transactions", unwraped);
+      msg.value = `Створено автоматично корекцію на суму ${correction} ${settingsStore.settings[0].displayedCurrency}`;
+      setOpen(true)
+      
+    }
+
     const unwraped = unwrapData(data.value)
     updateData('accounts', unwraped)
   } else if (role === 'delete') {

@@ -15,7 +15,7 @@
             <ion-label>
               <h2 class = "text-xl">Створити категорію</h2>
             </ion-label>
-            <ion-toast class = "-translate-y-14" :is-open="isOpen" message="Категорію створено." :duration="2500"  @didDismiss="setOpen(false)" position-anchor="footer"></ion-toast>
+            <ion-toast class = "-translate-y-14" :is-open="isOpen" message="Категорію створено" :duration="2500"  @didDismiss="setOpen(false)" position-anchor="footer"></ion-toast>
         </ion-item>
         </ion-list>
         <h2>Налаштування</h2>

@@ -181,6 +181,7 @@ settingsStore.getSettings()
     if(role === "delete"){
       const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
       accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
+      accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
       deleteObjectInArray(transactionsStore.transactions, data.value.id);
       deleteRecordById("transactions", data.value.transactionId);
