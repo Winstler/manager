@@ -22,14 +22,33 @@
         </ion-segment>
         </ion-toolbar>
         <PieChartExpenses :periodStart = "periodStart" :periodEnd = "periodEnd" :currency = "settingsStore.settings[0].displayedCurrency" v-if="selectedSegment === 'default'"/>
-        <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-if="selectedSegment === 'income'" :currency = "settingsStore.settings[0].displayedCurrency"/>
-
+        <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-else :currency = "settingsStore.settings[0].displayedCurrency"/>
+        <h2 class = "mx-4" v-if="selectedSegment === 'default'">Топ категорій</h2>
+  <ion-list v-if="selectedSegment === 'default'" class = "mx-4 rounded-xl">
+    <ion-item class = "my-4" v-for="category in transactionsStore.expensesStats" button @click = "editCategory(category)" style ="flex items-center">
+      <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
+      <ion-label>{{ category.label }}
+        <ion-label class=""><div class ="text-gray-600">Тразакцій: {{category.transactionsAmount}}</div></ion-label>
+      </ion-label>
+      <ion-label slot = "end" color = "danger">{{ category.value }} {{ settingsStore.settings[0].displayedCurrency}}</ion-label>
+    </ion-item>
+  </ion-list>
+  <h2 class = "mx-4" v-if="selectedSegment === 'income'">Топ категорій</h2>
+  <ion-list v-if="selectedSegment === 'income'" class = "mx-4 rounded-xl">
+    <ion-item class = "my-4" v-for="category in transactionsStore.incomeStats" button @click = "editCategory(category)" style ="flex items-center">
+      <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
+      <ion-label>{{ category.label }}
+        <ion-label class=""><div class ="text-gray-600">Тразакцій: {{category.transactionsAmount}}</div></ion-label>
+      </ion-label>
+      <ion-label slot = "end" color = "success">{{ category.value }} {{ settingsStore.settings[0].displayedCurrency}}</ion-label>
+    </ion-item>
+  </ion-list>
       </ion-content>
     </ion-page>
   </template>
 
 <script setup>
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
+import { IonList, IonItem, IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
 import { onMounted, ref, computed } from 'vue'
 import PieChartExpenses from '../components/analytics/expensesChart.vue'
 import PieChartIncome from '../components/analytics/incomeChart.vue'
@@ -103,3 +122,8 @@ const periodEnd = computed(() => {
   }
 })
 </script>
+<style>
+ion-item:last-child {
+  --border-style: none
+}
+</style>

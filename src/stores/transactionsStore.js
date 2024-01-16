@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { getData } from '../indexedDB'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+const categoriesStore = useCategoriesStore()
 
 export const useTransactionsStore = defineStore('transactions', {
   state: () => ({
@@ -51,6 +53,7 @@ export const useTransactionsStore = defineStore('transactions', {
     // Агрегируем данные по категориям
     this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
+      const categoryPos = categoriesStore.categories.findIndex((e) => e.id === categoryId);
       const categorySum = Number(transaction.sum);
       const transactionTime = transaction.created
 
@@ -59,16 +62,20 @@ export const useTransactionsStore = defineStore('transactions', {
         categoriesMap[categoryId] = {
           value: categorySum,
           label: transaction.categorie,
+          color: categoriesStore.categories[categoryPos].color,
+          transactionsAmount: 1
         };
       } else {
         categoriesMap[categoryId].value += categorySum;
+        categoriesMap[categoryId].transactionsAmount++;
       }
       }
     });
 
     // Преобразуем объект в массив
     const statsArray = Object.values(categoriesMap);
-
+    statsArray.sort((a,b) => a.value - b.value )
+    console.log(statsArray)
     return statsArray;
     },
     incomeStats(){
@@ -77,6 +84,7 @@ export const useTransactionsStore = defineStore('transactions', {
     // Агрегируем данные по категориям
     this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
+      const categoryPos = categoriesStore.categories.findIndex((e) => e.id === categoryId);
       const categorySum = Number(transaction.sum);
 
       if (categorySum > 0) {
@@ -84,85 +92,48 @@ export const useTransactionsStore = defineStore('transactions', {
         categoriesMap[categoryId] = {
           value: categorySum,
           label: transaction.categorie,
+          color: categoriesStore.categories[categoryPos].color,
+          transactionsAmount: 1
         };
       } else {
         categoriesMap[categoryId].value += categorySum;
+        console.log("added")
+        categoriesMap[categoryId].transactionsAmount++;
       }
       }
     });
 
     // Преобразуем объект в массив
     const statsArray = Object.values(categoriesMap);
+    statsArray.sort((a,b) => b.value - a.value )
+    console.log(statsArray)
 
     return statsArray;
     },
     expensesCategoryLabels() {
-      const uniqueExpenseLabels = new Set();
-  
-      // Собираем уникальные метки категорий
-      this.filteredTransactions.forEach((transaction) => {
-        const categorySum = Number(transaction.sum);
-
-        if (categorySum < 0) {
-          uniqueExpenseLabels.add(transaction.categorie);
-        }
-      });
-  
-      // Преобразуем Set в массив
-      const expenseLabelsArray = Array.from(uniqueExpenseLabels);
+      const expenseLabelsArray = [];
+      this.expensesStats.forEach((s) => expenseLabelsArray.push(s.label))
   
       return expenseLabelsArray;
   },
   incomeCategoryLabels() {
-    const uniqueExpenseLabels = new Set();
-
-    // Собираем уникальные метки категорий
-    this.filteredTransactions.forEach((transaction) => {
-      const categorySum = Number(transaction.sum);
-
-      if (categorySum > 0) {
-        uniqueExpenseLabels.add(transaction.categorie);
-      }
-    });
-
-    // Преобразуем Set в массив
-    const expenseLabelsArray = Array.from(uniqueExpenseLabels);
-
-    return expenseLabelsArray;
+    const expenseLabelsArray = [];
+      this.incomeStats.forEach((s) => expenseLabelsArray.push(s.label))
+  
+      return expenseLabelsArray;
 },
   getColorsExpense(){
-    const uniqueExpenseColors = new Set();
-
-    // Собираем уникальные метки категорий
-    this.filteredTransactions.forEach((transaction) => {
-      const categorySum = Number(transaction.sum);
-
-      if (categorySum < 0) {
-        uniqueExpenseColors.add(transaction.color);
-      }
-    });
-
-    // Преобразуем Set в массив
-    const expenseColorsArray = Array.from(uniqueExpenseColors);
-
+    
+    const expenseColorsArray = [];
+    this.expensesStats.forEach((s) => expenseColorsArray.push(s.color))
+    
     return expenseColorsArray;
   },
   getColorsIncome(){
-    const uniqueIncomeColors = new Set();
-
-    // Собираем уникальные метки категорий
-    this.filteredTransactions.forEach((transaction) => {
-      const categorySum = Number(transaction.sum);
-
-      if (categorySum > 0) {
-        uniqueIncomeColors.add(transaction.color);
-      }
-    });
-
-    // Преобразуем Set в массив
-    const incomeColorsArray = Array.from(uniqueIncomeColors);
-
-    return incomeColorsArray;
+    const expenseColorsArray = [];
+    this.incomeStats.forEach((s) => expenseColorsArray.push(s.color))
+    
+    return expenseColorsArray;
   }
 }
 })

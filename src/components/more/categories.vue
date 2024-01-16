@@ -64,4 +64,6 @@ function deleteAllTransactions (categorieId) {
   transactionsStore.transactions = filteredArray
 }
 
+
+
 </script>

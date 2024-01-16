@@ -37,7 +37,7 @@
       <ion-button shape = "round" class = "mt-3" id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
       <h2 v-if = "transactionsStore.transactions.filter((t) => t.account === obj.id).length !== 0">Останні транзакції</h2>
       <ion-list v-if = "transactionsStore.transactions.filter((t) => t.account === obj.id).length !== 0" class = "rounded-xl">
-          <ion-item class = "flex-row" v-for = "transaction in transactionsStore.transactions.filter((t) => t.account === obj.id)" button @click = "openModalChange(transaction.id, transaction.categorieId, transaction.sum, transaction.account, transaction.categorie, transaction.accountName)">
+          <ion-item class = "flex-row" v-for = "transaction in transactionsStore.transactions.filter((t) => t.account === obj.id)" button @click = "openModalChange(transaction)">
             <div class = "h-10 w-10 rounded-full mr-2" :style = "{ backgroundColor: transaction.color}"></div>
             <ion-label>
               <h2 class = "flex"><div>{{ transaction.categorie }}</div><div class = "grow"></div><div :class = "transaction.sum >= 0 ? 'text-green-500' : 'text-red-500'">{{ transaction.sum }} {{ settingsStore.settings[0].displayedCurrency }}</div></h2>
@@ -62,6 +62,7 @@
   </template>
 
 <script setup>
+import TransactionModalChange from '@/components/transactions/TransactionModalChange.vue';
 import {
   IonContent,
   IonHeader,
@@ -163,4 +164,62 @@ const limitColor = computed (() => {
   else if (avaibleLimit.value < 0) return "danger"
 
 })
+
+const openModalChange = async (t) => {
+    const pastSum = t.sum;
+    
+    const modal = await modalController.create({
+      component: TransactionModalChange,
+      initialBreakpoint: 0.5,
+        breakpoints: [0.5, 1],
+      componentProps: {
+        sum: Number(t.sum),
+        transactionId: t.id,
+        categorieId: t.categorieId,
+        accountId: t.account,
+        created: t.created
+      },
+    
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    if (role === 'confirm') {
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.accountId.replace(/"/g, ""));
+      accountsStore.accounts[accountIndex].sum -= Number(pastSum);
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
+      deleteObjectInArray(transactionsStore.transactions, data.transactionId);
+      deleteRecordById("transactions", data.transactionId);
+
+
+      const categorieIndex = categoriesStore.categories.findIndex((item) => item.id == data.categorieId.replace(/"/g, ""))
+      const transaction = {
+        id: data.transactionId,
+        account: data.accountId.replace(/"/g, ""),
+        accountName: accountsStore.accounts[accountIndex].name, 
+        sum: Number(data.sum),
+        categorieId: data.categorieId.replace(/"/g, ""), 
+        categorie: categoriesStore.categories[categorieIndex].name,
+        created: data.created,
+        color: categoriesStore.categories[categorieIndex].color,
+      };
+      
+      
+      transactionsStore.transactions.unshift(transaction);
+      
+      const unwraped = unwrapData(transaction);
+      addData("transactions", unwraped);
+
+      accountsStore.accounts[accountIndex].sum = Number(accountsStore.accounts[accountIndex].sum);
+      accountsStore.accounts[accountIndex].sum += Number(transaction.sum);
+      accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));    }
+    if(role === "delete"){
+      const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
+      accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
+      accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
+      updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
+      deleteObjectInArray(transactionsStore.transactions, data.value.id);
+      deleteRecordById("transactions", data.value.transactionId);
+    }
+  };
 </script>

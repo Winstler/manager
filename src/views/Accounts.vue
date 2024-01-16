@@ -3,7 +3,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-title>Баланс:</ion-title>
-          <ion-title slot = "end" :class = "accountsStore.totalBalance >= 0 ? 'text-green-500' : 'text-red-500'" >{{ accountsStore.totalBalance }} {{ settingsStore.settings[0].displayedCurrency }}</ion-title>
+          <ion-title slot = "end" :class = "accountsStore.totalBalance >= 0 ? 'text-green-500' : 'text-red-500'" >{{ accountsStore.totalBalance.toFixed(2) }} {{ settingsStore.settings[0].displayedCurrency }}</ion-title>
         </ion-toolbar>
       </ion-header>
 
