@@ -23,8 +23,8 @@
         </ion-toolbar>
         <PieChartExpenses :periodStart = "periodStart" :periodEnd = "periodEnd" :currency = "settingsStore.settings[0].displayedCurrency" v-if="selectedSegment === 'default'"/>
         <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-else :currency = "settingsStore.settings[0].displayedCurrency"/>
-        <h2 class = "mx-4" v-if="selectedSegment === 'default'">Топ категорій</h2>
-  <ion-list v-if="selectedSegment === 'default'" class = "mx-4 rounded-xl">
+        <h2 class = "mx-4" v-if="selectedSegment === 'default' && transactionsStore.expensesStats.length != 0">Топ категорій</h2>
+  <ion-list v-if="selectedSegment === 'default' && transactionsStore.expensesStats.length != 0" class = "mx-4 rounded-xl">
     <ion-item class = "my-4" v-for="category in transactionsStore.expensesStats" button @click = "editCategory(category)" style ="flex items-center">
       <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
       <ion-label>{{ category.label }}
@@ -33,8 +33,8 @@
       <ion-label slot = "end" color = "danger">{{ category.value }} {{ settingsStore.settings[0].displayedCurrency}}</ion-label>
     </ion-item>
   </ion-list>
-  <h2 class = "mx-4" v-if="selectedSegment === 'income'">Топ категорій</h2>
-  <ion-list v-if="selectedSegment === 'income'" class = "mx-4 rounded-xl">
+  <h2 class = "mx-4" v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0">Топ категорій</h2>
+  <ion-list v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0" class = "mx-4 rounded-xl">
     <ion-item class = "my-4" v-for="category in transactionsStore.incomeStats" button @click = "editCategory(category)" style ="flex items-center">
       <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
       <ion-label>{{ category.label }}
