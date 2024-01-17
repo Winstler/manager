@@ -5,8 +5,8 @@
           <ion-select-option value="today">Сьогодні</ion-select-option>
           <ion-select-option value="yesterday">Вчора</ion-select-option>
           <ion-select-option value="week">Останні 7 днів</ion-select-option>
-          <ion-select-option value="month">Останній 30 днів</ion-select-option>
-          <ion-select-option value="year">Останній 365 днів</ion-select-option>
+          <ion-select-option value="month">Останні 30 днів</ion-select-option>
+          <ion-select-option value="year">Останні 365 днів</ion-select-option>
           <ion-select-option value="all">За весь час</ion-select-option>
         </ion-select>
       </ion-header>
@@ -25,7 +25,7 @@
         <PieChartIncome :periodStart = "periodStart" :periodEnd = "periodEnd" v-else :currency = "settingsStore.settings[0].displayedCurrency"/>
         <h2 class = "mx-4" v-if="selectedSegment === 'default' && transactionsStore.expensesStats.length != 0">Топ категорій</h2>
   <ion-list v-if="selectedSegment === 'default' && transactionsStore.expensesStats.length != 0" class = "mx-4 rounded-xl">
-    <ion-item class = "my-4" v-for="category in transactionsStore.expensesStats" button @click = "editCategory(category)" style ="flex items-center">
+    <ion-item class = "my-4" v-for="category in transactionsStore.expensesStats" style ="flex items-center">
       <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
       <ion-label>{{ category.label }}
         <ion-label class=""><div class ="text-gray-600">Тразакцій: {{category.transactionsAmount}}</div></ion-label>
@@ -35,7 +35,7 @@
   </ion-list>
   <h2 class = "mx-4" v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0">Топ категорій</h2>
   <ion-list v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0" class = "mx-4 rounded-xl">
-    <ion-item class = "my-4" v-for="category in transactionsStore.incomeStats" button @click = "editCategory(category)" style ="flex items-center">
+    <ion-item class = "my-4" v-for="category in transactionsStore.incomeStats" @click = "editCategory(category)" style ="flex items-center">
       <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
       <ion-label>{{ category.label }}
         <ion-label class=""><div class ="text-gray-600">Тразакцій: {{category.transactionsAmount}}</div></ion-label>
@@ -48,7 +48,7 @@
   </template>
 
 <script setup>
-import { IonList, IonItem, IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
+import { IonList, IonItem, IonHeader, IonToolbar, IonTitle, modalController, IonContent, IonPage, IonSegment, IonSegmentButton, IonLabel, IonSelect, IonSelectOption } from '@ionic/vue'
 import { onMounted, ref, computed } from 'vue'
 import PieChartExpenses from '../components/analytics/expensesChart.vue'
 import PieChartIncome from '../components/analytics/incomeChart.vue'
@@ -121,6 +121,33 @@ const periodEnd = computed(() => {
       break
   }
 })
+
+import editCategorie from '@/components/more/editCategories.vue'
+async function editCategory (c) {
+    const modal = await modalController.create({
+    component: editCategorie,
+    componentProps: {
+      id: c.id,
+      name: c.name,
+      color: c.color,
+      isExpense: c.isExpense
+    },
+    color: "light"
+
+  })
+  modal.present()
+  const { data, role } = await modal.onWillDismiss();
+  if (role === 'confirm') {
+    changeObjectInArray(categoriesStore.categories, data.value.id, data.value)
+    const unwraped = unwrapData(data.value)
+    updateData('categories', unwraped)
+  } else if (role === 'delete') {
+    deleteObjectInArray(categoriesStore.categories, data.value.id)
+    deleteRecordById('categories', data.value.id)
+    deleteAllTransactions(data.value.id)
+    deleteAllRecordWithConditions('transactions', 'categorieId', data.value.id)
+  }
+}
 </script>
 <style>
 ion-item:last-child {

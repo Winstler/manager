@@ -32,12 +32,12 @@
                   </ion-select>
                 </ion-item>
                 <ion-item>
-                    <ion-input label-placement="stacked" label="Сума операції" type="number" v-model = "obj.sum"></ion-input>
+                    <ion-input label-placement="stacked" label="Сума операції" type="number" :placeholder="'0 ' + settingsStore.settings[0].displayedCurrency" v-model = "obj.sum"></ion-input>
                 </ion-item>
                 <ion-item>
                   <ion-datetime-button datetime="datetime" v-model = "obj.selectedDate"></ion-datetime-button>
                   <ion-modal :keep-contents-mounted="true">
-                    <ion-datetime id="datetime" v-model = "obj.selectedDate" display-format = "YYYY-MM-DDTHH:mm"></ion-datetime>
+                    <ion-datetime id="datetime" v-model = "obj.selectedDate"></ion-datetime>
                   </ion-modal>
                 </ion-item>
             </ion-list>
@@ -66,6 +66,10 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 const accountsStore = useAccountsStore()
 const categoriesStore = useCategoriesStore()
 
+import { useSettingsStore } from '@/stores/settingsStore'
+const settingsStore = useSettingsStore()
+settingsStore.getSettings();
+
 const updateSelect = (e, smth) => {
   // Применяем replace к значению, десериализованному из JSON.stringify
   smth = e.replace(/['"]+/g, '')
@@ -73,7 +77,7 @@ const updateSelect = (e, smth) => {
 
 const obj = ref({
   currentAccount: '',
-  sum: 0,
+  sum: null,
   categorie: '',
   selectedDate: new Date().toISOString()
 })

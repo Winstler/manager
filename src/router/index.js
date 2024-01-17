@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import NavbarIonic from '../components/NavbarIonic.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  redirect: { path: "/" },
   routes: [
     {
       path: '/',
@@ -34,6 +35,7 @@ const router = createRouter({
       ],
     },
   ]
+
 })
 
 export default router

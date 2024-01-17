@@ -16,7 +16,7 @@
         <ion-list class="rounded-xl">
         <template v-for="(transactions, date) in groupedTransactions" :key="date">
           <ion-item-divider>
-            <ion-label>{{ date }}</ion-label>
+            <ion-label :color = "areDatesEqual(date, new Date())">{{ date }}</ion-label>
           </ion-item-divider>
           <ion-item
             class="flex-row"
@@ -84,6 +84,12 @@ import { useSettingsStore } from "@/stores/settingsStore"
 const settingsStore = useSettingsStore();
 settingsStore.getSettings()
 
+function areDatesEqual(date1, date2) {
+  date1 = date1.split(',')[0].split('.').reverse().join('-');
+  date1 = new Date(date1) 
+  if(date1.getFullYear() === date2.getFullYear() &&date1.getMonth() === date2.getMonth() &&date1.getDate() === date2.getDate()) return "primary"
+}
+
   const infoMessage = computed(() => {
     if(transactionsStore.transactions.length == 0){
       return "У вас ще немає транзакцій"
@@ -112,7 +118,6 @@ settingsStore.getSettings()
         account: data.value.currentAccount.replace(/"/g, ""),
         accountName: accountsStore.accounts[accountIndex].name, 
         sum: Number(data.value.sum),
-        currency: "$",
         categorieId: data.value.categorie.replace(/"/g, ""), 
         categorie: categoriesStore.categories[categorieIndex].name,
         created: data.value.selectedDate,
@@ -217,8 +222,11 @@ settingsStore.getSettings()
   const groupedTransactions = computed(() => {
   const grouped = {};
 
+  const weekDays = ["понеділок", "вівторок", "середа", "четвер", "п'ятниця", "субота", "неділя"];
+
   for (const transaction of transactionsStore.transactions) {
-    const date = new Date(transaction.created).toLocaleDateString();
+    const created = new Date(transaction.created);
+    const date = created.toLocaleDateString() + ", " + String(weekDays[created.getDay()-1]);
 
     if (!grouped[date]) {
       grouped[date] = [];
@@ -226,16 +234,21 @@ settingsStore.getSettings()
 
     grouped[date].push(transaction);
   }
-  
-  const groupedArray = Array.from(Object.entries(grouped));
 
+  const groupedArray = Array.from(Object.entries(grouped));
   // Сортировка массива по дате (новые даты впереди)
   groupedArray.sort((dateA, dateB) => {
     const parsedDateA = new Date(dateA[0].split('.').reverse().join('-'));
     const parsedDateB = new Date(dateB[0].split('.').reverse().join('-'));
     return parsedDateB - parsedDateA; // Сортировка в обратном порядке (новые впереди)
   });
-
+  groupedArray.forEach((item) => {
+    item[1].sort((dateA, dateB) => {
+      const parsedDateA = new Date(dateA.created);
+      const parsedDateB = new Date(dateB.created);
+      return parsedDateB - parsedDateA;
+    });
+  })
   // Преобразование отсортированного массива обратно в объект
   const sortedGrouped = Object.fromEntries(groupedArray);
 

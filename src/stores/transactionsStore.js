@@ -36,7 +36,6 @@ export const useTransactionsStore = defineStore('transactions', {
       this.filteredTransactions = [];
       const filtered = this.transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.created);
-        console.log(transactionDate >= new Date(periodStart))
         return (transactionDate >= new Date(periodStart)) && (transactionDate <= new Date (periodEnd));
       });
       filtered.forEach(element => {

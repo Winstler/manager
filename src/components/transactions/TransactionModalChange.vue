@@ -34,9 +34,9 @@
                     <ion-input label-placement="stacked" label="Сума операції" type="number" v-model = "obj.sum"></ion-input>
                 </ion-item>
                 <ion-item>
-                  <ion-datetime-button datetime="datetime" v-model = "obj.date"></ion-datetime-button>
+                  <ion-datetime-button datetime="datetime" v-model = "obj.created"></ion-datetime-button>
                   <ion-modal :keep-contents-mounted="true">
-                    <ion-datetime id="datetime" v-model = "obj.created" display-format = "YYYY-MM-DDTHH:mm"></ion-datetime>
+                    <ion-datetime id="datetime" v-model = "obj.created"></ion-datetime>
                   </ion-modal>
                 </ion-item>
                 <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
@@ -84,7 +84,8 @@
   const categoriesStore = useCategoriesStore();
 categoriesStore.getCategories()
 
-const selectedSegment = ref('default')
+const checkSum = computed(() => props.sum < 0 ? "default" : "income")
+const selectedSegment = ref(checkSum)
 const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
 
 const updateSelect = (e, smth) => {
@@ -97,7 +98,7 @@ const updateSelect = (e, smth) => {
       transactionId: String,
       categorieId: String,
       accountId: String,
-      created: Date
+      created: String
     })
 
     const obj = ref({
@@ -105,7 +106,7 @@ const updateSelect = (e, smth) => {
       transactionId: props.transactionId,
       categorieId: props.categorieId,
       accountId: props.accountId,
-      created: props.created,
+      created: new Date (props.created).toISOString(),
     })
     
     const cancel = () => modalController.dismiss(null, 'cancel');
