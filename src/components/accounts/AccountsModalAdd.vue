@@ -37,8 +37,8 @@
       <div class = "bg-white mt-2 rounded-lg"><p v-if = "obj.type == 'noLimit'" class = "m-4 py-2 text-gray-500 text-sm">Цей рахунок не має жодних лімітів</p></div>
       <ion-alert
         :is-open="limitError"
-        header="Перевищен кредитний ліміт"
-        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе кредитний ліміт. Змініть дані та спробуйте знову."
+        header="Перевищен ліміт"
+        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе ліміт. Змініть дані та спробуйте знову."
         :buttons="alertButtons"
         @didDismiss="setOpen(false)">
     </ion-alert>
@@ -66,12 +66,12 @@ import { generateUniqueId } from '../../indexedDB'
 import { useSettingsStore } from '@/stores/settingsStore'
 const settingsStore = useSettingsStore()
 const limitError = ref(false)
+
 const checkLimit = () => {
   obj.value.sum = Number(obj.value.sum)
   obj.value.creditLimit = Number(obj.value.creditLimit)
   if (obj.value.creditLimit < 0) obj.value.creditLimit *= (-1)
   if(obj.value.type === 'noLimit'){ 
-    console.log(5)
     obj.value.creditLimit = Infinity
   }
   if ((obj.value.type === 'normal' && obj.value.sum < 0) || (obj.value.sum < 0 && (obj.value.sum + obj.value.creditLimit) < 0)) {
@@ -83,12 +83,14 @@ const alertButtons = [
     text: 'Ок',
     handler: () => {
       limitError.value = false
+      
     }
   }
 ]
 const setOpen = (state) => {
   limitError.value = state
 }
+
 const obj = ref({
   name: '',
   sum: null,

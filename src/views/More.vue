@@ -23,6 +23,9 @@
           <ion-select class = "pl-5" v-model="selectedCurrency" justify="space-between" label="Виберіть валюту"  @ionChange="updateCurrency">
             <ion-select-option :value="currency" v-for = "currency in settingsStore.settings[0].list"  >{{currency}}</ion-select-option>
           </ion-select>
+          <ion-select class = "pl-5" v-model = "selectedAccount" label = "Рахунок за замовчуванням" justify="space-between"  @ionChange="updateAccount">
+            <ion-select-option :value="account.id" v-for = "account in accountsStore.accounts" :key = "account.id">{{account.name}}</ion-select-option>
+          </ion-select>
         </ion-list>
       </ion-content>
     </ion-page>
@@ -44,13 +47,21 @@ import { useSettingsStore } from '@/stores/settingsStore'
 const settingsStore = useSettingsStore()
 settingsStore.getSettings();
 
-console.log(settingsStore.settings[0].list)
+import { useAccountsStore } from '../stores/accountsStore'
+  const accountsStore = useAccountsStore();
+
 const updateCurrency = (event) => {
   settingsStore.settings[0].displayedCurrency = event.detail.value.replace(/['"]+/g, '');
-  
+  localStorage.setItem("currency", event.detail.value.replace(/['"]+/g, ''))
+}
+const updateAccount = (event) => {
+  console.log(event.detail.value.replace(/['"]+/g, ''))
+  settingsStore.settings[1].accountId = event.detail.value.replace(/['"]+/g, '');
+  localStorage.setItem("account", event.detail.value.replace(/['"]+/g, ''))
 }
 
-const selectedCurrency = ref(settingsStore.settings[0].displayedCurrency)
+const selectedCurrency = ref(settingsStore.settings[0].displayedCurrency);
+const selectedAccount = ref(settingsStore.settings[1].accountId)
 
 const isOpen = ref(false)
 const setOpen = (state) => {

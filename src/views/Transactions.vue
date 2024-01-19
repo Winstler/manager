@@ -184,11 +184,12 @@ function areDatesEqual(date1, date2) {
       accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));    }
     if(role === "delete"){
+      console.log(data.value.transactionId)
       const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
       accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
       accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));
-      deleteObjectInArray(transactionsStore.transactions, data.value.id);
+      deleteObjectInArray(transactionsStore.transactions, data.value.transactionId);
       deleteRecordById("transactions", data.value.transactionId);
     }
   };
@@ -207,7 +208,7 @@ function areDatesEqual(date1, date2) {
     modal.present();
     const { data, role } = await modal.onWillDismiss();
     if (role === 'confirm') {
-      accountsStore.accounts.push({id: data.value.id, sum: data.value.sum, name: data.value.name, currency: "$"});
+      accountsStore.accounts.push({id: data.value.id, sum: data.value.sum, name: data.value.name, type: data.value.type});
       const unwraped = unwrapData(data.value);
       addData("accounts", unwraped);
       openSheet();
@@ -222,11 +223,11 @@ function areDatesEqual(date1, date2) {
   const groupedTransactions = computed(() => {
   const grouped = {};
 
-  const weekDays = ["понеділок", "вівторок", "середа", "четвер", "п'ятниця", "субота", "неділя"];
+  const weekDays = [", понеділок", ", вівторок", ", середа", ", четвер", ", п'ятниця", ", субота", ", неділя"];
 
   for (const transaction of transactionsStore.transactions) {
     const created = new Date(transaction.created);
-    const date = created.toLocaleDateString() + ", " + String(weekDays[created.getDay()-1]);
+    const date = created.toLocaleDateString() ;
 
     if (!grouped[date]) {
       grouped[date] = [];
@@ -237,6 +238,7 @@ function areDatesEqual(date1, date2) {
 
   const groupedArray = Array.from(Object.entries(grouped));
   // Сортировка массива по дате (новые даты впереди)
+  console.log(groupedArray)
   groupedArray.sort((dateA, dateB) => {
     const parsedDateA = new Date(dateA[0].split('.').reverse().join('-'));
     const parsedDateB = new Date(dateB[0].split('.').reverse().join('-'));
@@ -249,7 +251,12 @@ function areDatesEqual(date1, date2) {
       return parsedDateB - parsedDateA;
     });
   })
-  // Преобразование отсортированного массива обратно в объект
+
+  console.log(groupedArray)
+  groupedArray.forEach((item) =>{
+    const day = new Date (item[0].split('.').reverse().join('-')).getDay() - 1;
+    item[0] += weekDays[day] 
+  })
   const sortedGrouped = Object.fromEntries(groupedArray);
 
   return sortedGrouped;

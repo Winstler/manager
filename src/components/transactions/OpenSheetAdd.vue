@@ -37,7 +37,7 @@
                 <ion-item>
                   <ion-datetime-button datetime="datetime" v-model = "obj.selectedDate"></ion-datetime-button>
                   <ion-modal :keep-contents-mounted="true">
-                    <ion-datetime id="datetime" v-model = "obj.selectedDate"></ion-datetime>
+                    <ion-datetime id="datetime" v-model = "obj.selectedDate" dateformat = "YYYY-MM-DDTHH:mm:ssZ"></ion-datetime>
                   </ion-modal>
                 </ion-item>
             </ion-list>
@@ -56,6 +56,13 @@
         :buttons="alertButtons"
         @didDismiss="setOpen(false)"></ion-alert>
         </ion-content>
+      <ion-alert
+      :is-open="zeroError"
+      header="Введіть суму"
+      message="Будь ласка, введіть суму відмінну від нуля."
+      :buttons="alertButtons"
+      @didDismiss="setOpenZeroError(false)">
+    </ion-alert>
 </template>
 <script setup>
 import { IonAlert, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonModal, IonButtons, IonButton, IonSelect, IonSelectOption, modalController, IonInput, IonSegment, IonSegmentButton, IonLabel, IonDatetime, IonDatetimeButton } from '@ionic/vue'
@@ -75,11 +82,34 @@ const updateSelect = (e, smth) => {
   smth = e.replace(/['"]+/g, '')
 }
 
+const zeroError = ref(false)
+
+const setOpenZeroError = (state) => {
+  zeroError.value = state
+}
+
+function toIsoString(date) {
+  var tzo = -date.getTimezoneOffset(),
+      dif = tzo >= 0 ? '+' : '-',
+      pad = function(num) {
+          return (num < 10 ? '0' : '') + num;
+      };
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) +
+      dif + pad(Math.floor(Math.abs(tzo) / 60)) +
+      ':' + pad(Math.abs(tzo) % 60);
+}
+
 const obj = ref({
   currentAccount: '',
   sum: null,
   categorie: '',
-  selectedDate: new Date().toISOString()
+  selectedDate: toIsoString(new Date())
 })
 const setOpenContinue = (state) => {
   isOpenContinue.value = state
@@ -88,11 +118,10 @@ const setOpen = (state) => {
   limitError.value = state
 }
 onMounted(() => {
-  // Выполняется после монтирования компонента
   if (accountsStore.accounts.length === 1) {
-    // Если у вас только один аккаунт, установите его в качестве текущего аккаунта
     obj.value.currentAccount = accountsStore.accounts[0].id
   }
+  obj.value.currentAccount = settingsStore.settings[1].accountId
 })
 
 accountsStore.getAccounts()
@@ -103,24 +132,25 @@ const cancel = () => {
 const defaultCategory = computed(() => obj.value.sum < 0 ? "defaultExpense" : "defaultIncome")
 const checkLimit = () => {
   obj.value.sum = Number(obj.value.sum).toFixed(2)
-  if (obj.value.sum === 0) {
-    modalController.dismiss(null, 'dismiss')
-  }
   if (obj.value.sum > 0 && selectedSegment.value === 'default') {
     obj.value.sum *= -1
   } else if (obj.value.sum < 0 && selectedSegment.value === 'income') {
     obj.value.sum *= -1
   }
   if(obj.value.categorie === '') {obj.value.categorie = defaultCategory.value} 
-  console.log(obj.value)
+  if(obj.value.selectedDate === null) obj.value.selectedDate = new Date()
   const accountIndex = accountsStore.accounts.findIndex((item) => item.id === obj.value.currentAccount)
   const accountSum = Number(accountsStore.accounts[accountIndex].sum)
   const creditLimit = Number(accountsStore.accounts[accountIndex].creditLimit)
   obj.value.sum = Number(obj.value.sum)
-  console.log(accountSum, creditLimit, obj.value.sum)
-  if ((accountSum + creditLimit) + obj.value.sum < 0) {
+  if (obj.value.sum === 0) {
+    zeroError.value = true
+    obj.value.sum = null
+  }
+  else if ((accountSum + creditLimit) + obj.value.sum < 0) {
     limitError.value = true
-  } else confirm()
+  }  
+  else confirm()
 }
 const confirm = () => {
   modalController.dismiss(obj, 'confirm')
@@ -147,6 +177,7 @@ const alertButtons = [
     text: 'Ок',
     handler: () => {
       limitError.value = false
+      zeroError.value = false
     }
   }
 ]

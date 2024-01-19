@@ -39,7 +39,7 @@
                     <ion-datetime id="datetime" v-model = "obj.created"></ion-datetime>
                   </ion-modal>
                 </ion-item>
-                <ion-button id="present-alert" color = "danger" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
+                <ion-button id="present-alert" color = "danger" shape = "round" expand="full"><ion-icon slot="start" :icon="trash"></ion-icon>Видалити</ion-button>
                 <ion-alert
                   trigger="present-alert"
                   header="Ви впевнені?"
@@ -75,7 +75,7 @@
     } from '@ionic/vue';
     import { trash } from 'ionicons/icons';
     import { ref, computed } from 'vue';
-
+    import { format, parseISO } from 'date-fns';
     import { useAccountsStore } from '@/stores/accountsStore'
   const accountsStore = useAccountsStore();
   accountsStore.getAccounts()
@@ -92,6 +92,22 @@ const updateSelect = (e, smth) => {
   // Применяем replace к значению, десериализованному из JSON.stringify
   smth = e.replace(/['"]+/g, '')
 }
+function toIsoString(date) {
+  var tzo = -date.getTimezoneOffset(),
+      dif = tzo >= 0 ? '+' : '-',
+      pad = function(num) {
+          return (num < 10 ? '0' : '') + num;
+      };
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) +
+      dif + pad(Math.floor(Math.abs(tzo) / 60)) +
+      ':' + pad(Math.abs(tzo) % 60);
+}
 
     const props = defineProps({
       sum: Number,
@@ -106,7 +122,7 @@ const updateSelect = (e, smth) => {
       transactionId: props.transactionId,
       categorieId: props.categorieId,
       accountId: props.accountId,
-      created: new Date (props.created).toISOString(),
+      created: toIsoString(new Date(props.created)),
     })
     
     const cancel = () => modalController.dismiss(null, 'cancel');
