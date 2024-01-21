@@ -1,6 +1,6 @@
 {
   "appId": "com.winstler.managable",
-  "appName": "Managable",
+  "appName": "Фінансовий менеджер",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

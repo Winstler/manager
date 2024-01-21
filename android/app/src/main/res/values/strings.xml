@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">manager</string>
-    <string name="title_activity_main">manager</string>
+    <string name="app_name">Фінансовий менеджер</string>
+    <string name="title_activity_main">Фінансовий менеджер</string>
     <string name="package_name">com.manager</string>
     <string name="custom_url_scheme">com.manager</string>
 </resources>

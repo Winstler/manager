@@ -12,8 +12,8 @@
         <ion-item v-if="transactionsStore.error" class="text-red-400">
           {{ transactionsStore.error }}
         </ion-item>
-        <ion-item v-if="infoMessage">{{ infoMessage }}</ion-item>
-        <ion-list class="rounded-xl">
+        <ion-item v-if="infoMessage" class = "rounded-xl border-none" >{{ infoMessage }}</ion-item>
+        <ion-list class="rounded-xl" v-if = "transactionsStore.transactions.length !== 0">
         <template v-for="(transactions, date) in groupedTransactions" :key="date">
           <ion-item-divider>
             <ion-label :color = "areDatesEqual(date, new Date())">{{ date }}</ion-label>

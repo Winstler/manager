@@ -1,4 +1,4 @@
-package com.manager;
+package com.winstler.managable;
 
 import com.getcapacitor.BridgeActivity;
 
