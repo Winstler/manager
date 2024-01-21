@@ -7,7 +7,7 @@
       <ion-label>Доходи</ion-label>
     </ion-segment-button>
 </ion-segment>
-<ion-item v-if = "selectedSegment=='default'" class = "my-4" v-for="category in categoriesStore.filteredExpensesForLists" button @click = "editCategory(category)" style ="flex items-center">
+<ion-item v-if = "selectedSegment=='default'" class = "my-4 " v-for="category in categoriesStore.filteredExpensesForLists" button @click = "editCategory(category)" style ="flex items-center">
     <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
     <ion-label>{{ category.name }}</ion-label>
 </ion-item>

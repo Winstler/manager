@@ -94,3 +94,8 @@ const createCategory = async () => {
 
 
 </script>
+<style>
+ion-item:last-child{
+  --border-style: none;
+}
+</style>

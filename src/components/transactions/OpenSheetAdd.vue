@@ -51,8 +51,8 @@
 
     <ion-alert
         :is-open="limitError"
-        header="Перевищен кредитний ліміт"
-        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе кредитний ліміт. Змініть дані та спробуйте знову."
+        header="Недостатньо коштів"
+        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе ліміт. Змініть дані та спробуйте знову."
         :buttons="alertButtons"
         @didDismiss="setOpen(false)"></ion-alert>
         </ion-content>
@@ -78,7 +78,6 @@ const settingsStore = useSettingsStore()
 settingsStore.getSettings();
 
 const updateSelect = (e, smth) => {
-  // Применяем replace к значению, десериализованному из JSON.stringify
   smth = e.replace(/['"]+/g, '')
 }
 
@@ -118,9 +117,6 @@ const setOpen = (state) => {
   limitError.value = state
 }
 onMounted(() => {
-  if (accountsStore.accounts.length === 1) {
-    obj.value.currentAccount = accountsStore.accounts[0].id
-  }
   obj.value.currentAccount = settingsStore.settings[1].accountId
 })
 

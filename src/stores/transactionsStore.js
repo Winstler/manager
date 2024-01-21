@@ -44,15 +44,12 @@ export const useTransactionsStore = defineStore('transactions', {
     },
   },
   getters: {
-    getCategories() {
-      return this.filteredTransactions.map((t) => t.categorie);
-    },
     expensesStats(){
-      const categoriesMap = {};
-    // Агрегируем данные по категориям
+    const categoriesMap = {};
+
     this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
-      const categoryPos = categoriesStore.categories.findIndex((e) => e.id === categoryId);
+      const categoryIndex = categoriesStore.categories.findIndex((e) => e.id === categoryId);
       const categorySum = Number(transaction.sum);
       const transactionTime = transaction.created
 
@@ -61,7 +58,7 @@ export const useTransactionsStore = defineStore('transactions', {
         categoriesMap[categoryId] = {
           value: categorySum,
           label: transaction.categorie,
-          color: categoriesStore.categories[categoryPos].color,
+          color: categoriesStore.categories[categoryIndex].color,
           transactionsAmount: 1
         };
       } else {
@@ -71,16 +68,12 @@ export const useTransactionsStore = defineStore('transactions', {
       }
     });
 
-    // Преобразуем объект в массив
     const statsArray = Object.values(categoriesMap);
     statsArray.sort((a,b) => a.value - b.value )
-    console.log(statsArray)
     return statsArray;
     },
     incomeStats(){
-      const categoriesMap = {};
-
-    // Агрегируем данные по категориям
+    const categoriesMap = {};
     this.filteredTransactions.forEach((transaction) => {
       const categoryId = transaction.categorieId;
       const categoryPos = categoriesStore.categories.findIndex((e) => e.id === categoryId);
@@ -101,8 +94,6 @@ export const useTransactionsStore = defineStore('transactions', {
       }
       }
     });
-
-    // Преобразуем объект в массив
     const statsArray = Object.values(categoriesMap);
     statsArray.sort((a,b) => b.value - a.value )
     console.log(statsArray)
@@ -114,20 +105,23 @@ export const useTransactionsStore = defineStore('transactions', {
       this.expensesStats.forEach((s) => expenseLabelsArray.push(s.label))
   
       return expenseLabelsArray;
-  },
+    },
+    getCategories() {
+      return this.filteredTransactions.map((t) => t.categorie);
+    },
+    getColorsExpense(){
+    
+      const expenseColorsArray = [];
+      this.expensesStats.forEach((s) => expenseColorsArray.push(s.color))
+      
+      return expenseColorsArray;
+    },
   incomeCategoryLabels() {
     const expenseLabelsArray = [];
       this.incomeStats.forEach((s) => expenseLabelsArray.push(s.label))
   
       return expenseLabelsArray;
 },
-  getColorsExpense(){
-    
-    const expenseColorsArray = [];
-    this.expensesStats.forEach((s) => expenseColorsArray.push(s.color))
-    
-    return expenseColorsArray;
-  },
   getColorsIncome(){
     const expenseColorsArray = [];
     this.incomeStats.forEach((s) => expenseColorsArray.push(s.color))

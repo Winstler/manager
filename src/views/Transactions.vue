@@ -254,7 +254,9 @@ function areDatesEqual(date1, date2) {
 
   console.log(groupedArray)
   groupedArray.forEach((item) =>{
-    const day = new Date (item[0].split('.').reverse().join('-')).getDay() - 1;
+    let day = new Date (item[0].split('.').reverse().join('-')).getDay() - 1;
+    if(day === -1) day = 6;
+    console.log(day)
     item[0] += weekDays[day] 
   })
   const sortedGrouped = Object.fromEntries(groupedArray);
