@@ -30,7 +30,6 @@ export const useCategoriesStore = defineStore('categories', {
         try{
           let data = await getData("categories");
           if(data.length === 0){
-            console.log("categories have been set")
             await this.setCategories()
             data = await getData("categories");
           }

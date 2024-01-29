@@ -116,8 +116,6 @@ const confirm = () => {
 }
 const avaibleLimit = computed (() => obj.value.sum < 0 ? Number(obj.value.creditLimit) + Number(obj.value.sum) : obj.value.creditLimit);
 const limitColor = computed (() => {
- 
-  console.log(avaibleLimit.value)
   if(avaibleLimit.value > 0) return "success"
   else if (avaibleLimit.value < 0) return "danger"
 

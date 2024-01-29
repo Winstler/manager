@@ -41,7 +41,7 @@
       return sum;
     },
       chartData() {  transactionsStore.getFilteredTransactions(this.periodStart, this.periodEnd) 
-        if (transactionsStore.filteredTransactions.length === 0) {
+        if (transactionsStore.incomeStats.length === 0) {
         this.noStatsmsg = true
       } else {
         this.noStatsmsg = false

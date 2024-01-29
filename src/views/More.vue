@@ -55,7 +55,6 @@ const updateCurrency = (event) => {
   localStorage.setItem("currency", event.detail.value.replace(/['"]+/g, ''))
 }
 const updateAccount = (event) => {
-  console.log(event.detail.value.replace(/['"]+/g, ''))
   settingsStore.settings[1].accountId = event.detail.value.replace(/['"]+/g, '');
   localStorage.setItem("account", event.detail.value.replace(/['"]+/g, ''))
 }

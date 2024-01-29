@@ -5,7 +5,7 @@
                 <ion-button color="medium" @click="cancel">Назад</ion-button>
               </ion-buttons>
               <ion-buttons slot="end">
-                <ion-button @click="confirm" :strong="true">Підтвердити</ion-button>
+                <ion-button @click="checkLimit" :strong="true">Підтвердити</ion-button>
               </ion-buttons>
             </ion-toolbar>
         </ion-header>
@@ -46,6 +46,21 @@
                   :message= "`Ви дійсно хочете видалити транзакцію?`" 
                   :buttons="alertButtons"
                 ></ion-alert>
+                <ion-alert
+        :is-open="limitError"
+        header="Недостатньо коштів"
+        message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе ліміт. Змініть дані та спробуйте знову."
+        :buttons="alertButtonsErrors"
+        @didDismiss="setOpen(false)">
+      </ion-alert>
+      <ion-alert
+      :is-open="zeroError"
+      header="Введіть суму"
+      message="Будь ласка, введіть суму відмінну від нуля."
+      :buttons="alertButtonsErrors"
+      @didDismiss="setOpenZeroError(false)">
+    </ion-alert>
+                
             </ion-list>
         </ion-content>
   </template>
@@ -84,12 +99,11 @@
   const categoriesStore = useCategoriesStore();
 categoriesStore.getCategories()
 
-const checkSum = computed(() => props.sum < 0 ? "default" : "income")
+const checkSum =  props.sum < 0 ? "default" : "income"
 const selectedSegment = ref(checkSum)
 const computedColor = computed(() => selectedSegment.value == "default" ? "danger" : "success");
 
 const updateSelect = (e, smth) => {
-  // Применяем replace к значению, десериализованному из JSON.stringify
   smth = e.replace(/['"]+/g, '')
 }
 function toIsoString(date) {
@@ -124,7 +138,30 @@ function toIsoString(date) {
       accountId: props.accountId,
       created: toIsoString(new Date(props.created)),
     })
-    
+    const defaultCategory = computed(() => obj.value.sum < 0 ? "defaultExpense" : "defaultIncome")
+const checkLimit = () => {
+  obj.value.sum = Number(obj.value.sum).toFixed(2)
+  if (obj.value.sum > 0 && selectedSegment.value === 'default') {
+    obj.value.sum *= -1
+  } else if (obj.value.sum < 0 && selectedSegment.value === 'income') {
+    obj.value.sum *= -1
+  }
+  if(obj.value.categorieId === '') {obj.value.categorieId = defaultCategory.value;} 
+  if(obj.value.selectedDate === null) obj.value.selectedDate = new Date()
+  const accountIndex = accountsStore.accounts.findIndex((item) => item.id === obj.value.accountId)
+  const accountSum = Number(accountsStore.accounts[accountIndex].sum)
+  const creditLimit = Number(accountsStore.accounts[accountIndex].creditLimit)
+  obj.value.sum = Number(obj.value.sum)
+  if (obj.value.sum === 0) {
+    zeroError.value = true
+    obj.value.sum = null
+  }
+  else if ((accountSum + creditLimit - props.sum) + obj.value.sum < 0) {
+    limitError.value = true
+  }  
+  else confirm()
+}
+
     const cancel = () => modalController.dismiss(null, 'cancel');
     const confirm = () => {
       obj.value.sum = Number(obj.value.sum).toFixed(2)
@@ -140,10 +177,28 @@ function toIsoString(date) {
       text: 'OK',
       role: 'Підтвердити',
       handler: () => {
-        console.log(obj.value.transactionId);
         deleteEvent()
       },
     },
     ];
-    
+    const alertButtonsErrors = [
+  {
+    text: 'Ок',
+    handler: () => {
+      limitError.value = false
+      zeroError.value = false
+    }
+  }
+]
+
+const zeroError = ref(false)
+
+const setOpenZeroError = (state) => {
+  zeroError.value = state
+}
+
+const limitError = ref(false)
+const setOpen = (state) => {
+  limitError.value = state
+}
   </script>

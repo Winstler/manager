@@ -184,7 +184,7 @@ function areDatesEqual(date1, date2) {
       accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
       updateData("accounts", unwrapData(accountsStore.accounts[accountIndex]));    }
     if(role === "delete"){
-      console.log(data.value.transactionId)
+
       const accountIndex = accountsStore.accounts.findIndex((item) => item.id == data.value.accountId.replace(/"/g, ""));
       accountsStore.accounts[accountIndex].sum -= Number(data.value.sum);
       accountsStore.accounts[accountIndex].sum = parseFloat(accountsStore.accounts[accountIndex].sum.toFixed(2));
@@ -237,12 +237,11 @@ function areDatesEqual(date1, date2) {
   }
 
   const groupedArray = Array.from(Object.entries(grouped));
-  // Сортировка массива по дате (новые даты впереди)
-  console.log(groupedArray)
+
   groupedArray.sort((dateA, dateB) => {
     const parsedDateA = new Date(dateA[0].split('.').reverse().join('-'));
     const parsedDateB = new Date(dateB[0].split('.').reverse().join('-'));
-    return parsedDateB - parsedDateA; // Сортировка в обратном порядке (новые впереди)
+    return parsedDateB - parsedDateA;
   });
   groupedArray.forEach((item) => {
     item[1].sort((dateA, dateB) => {
@@ -252,11 +251,11 @@ function areDatesEqual(date1, date2) {
     });
   })
 
-  console.log(groupedArray)
+
   groupedArray.forEach((item) =>{
     let day = new Date (item[0].split('.').reverse().join('-')).getDay() - 1;
     if(day === -1) day = 6;
-    console.log(day)
+
     item[0] += weekDays[day] 
   })
   const sortedGrouped = Object.fromEntries(groupedArray);

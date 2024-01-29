@@ -89,14 +89,12 @@ export const useTransactionsStore = defineStore('transactions', {
         };
       } else {
         categoriesMap[categoryId].value += categorySum;
-        console.log("added")
         categoriesMap[categoryId].transactionsAmount++;
       }
       }
     });
     const statsArray = Object.values(categoriesMap);
     statsArray.sort((a,b) => b.value - a.value )
-    console.log(statsArray)
 
     return statsArray;
     },

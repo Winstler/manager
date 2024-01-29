@@ -54,7 +54,8 @@
         header="Недостатньо коштів"
         message="Схоже, що ви неправильно ввели дані. На звичайному рахунку не може бути мінусового стану, або борг на рахунку перевищуе ліміт. Змініть дані та спробуйте знову."
         :buttons="alertButtons"
-        @didDismiss="setOpen(false)"></ion-alert>
+        @didDismiss="setOpen(false)">
+      </ion-alert>
         </ion-content>
       <ion-alert
       :is-open="zeroError"

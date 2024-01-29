@@ -33,8 +33,8 @@
       <ion-label slot = "end" color = "danger">{{ category.value }} {{ settingsStore.settings[0].displayedCurrency}}</ion-label>
     </ion-item>
   </ion-list>
-  <h2 class = "mx-4" v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0">Топ категорій</h2>
-  <ion-list v-if="selectedSegment === 'income' && transactionsStore.expensesStats.length != 0" class = "mx-4 mb-4 rounded-xl">
+  <h2 class = "mx-4" v-if="selectedSegment === 'income' && transactionsStore.incomeStats.length != 0">Топ категорій</h2>
+  <ion-list v-if="selectedSegment === 'income' && transactionsStore.incomeStats.length != 0" class = "mx-4 mb-4 rounded-xl">
     <ion-item class = "my-2" v-for="category in transactionsStore.incomeStats" @click = "editCategory(category)" style ="flex items-center">
       <div class="h-10 w-10 rounded-full mr-2" :style="{ backgroundColor: category.color }"></div>
       <ion-label>{{ category.label }}

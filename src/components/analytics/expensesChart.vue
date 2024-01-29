@@ -43,7 +43,7 @@ export default {
   methods:{
     fetchData(){
       transactionsStore.getFilteredTransactions(this.periodStart, this.periodEnd)
-      if (transactionsStore.filteredTransactions.length === 0) {
+      if (transactionsStore.expensesStats.length === 0) {
         this.noStatsmsg = true
       } else {
         this.noStatsmsg = false
@@ -61,7 +61,7 @@ export default {
     },
     chartData () {
       transactionsStore.getFilteredTransactions(this.periodStart, this.periodEnd)
-      if (transactionsStore.filteredTransactions.length === 0) {
+      if (transactionsStore.expensesStats.length === 0) {
         this.noStatsmsg = true
       } else {
         this.noStatsmsg = false

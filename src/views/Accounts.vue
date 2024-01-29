@@ -75,11 +75,11 @@ const openModalAdd = async () => {
   const { data, role } = await modal.onWillDismiss()
   if (role === 'confirm') {
     localStorage.setItem("account", data.value.id)
-    console.log(data.value.creditLimit)
+
     accountsStore.accounts.push(data.value)
     let unwraped = unwrapData(data.value)
     if(unwraped.creditLimit === null) unwraped.creditLimit = Infinity
-    console.log(unwraped)
+
     addData('accounts', unwraped)
   }
 }
@@ -101,9 +101,9 @@ const openModalChange = async (id, name, sum, type, creditLimit) => {
   if (role === 'confirm') {
     changeObjectInArray(accountsStore.accounts, data.value.id, data.value)
     let correction = Number(data.value.sum) - Number(data.value.initialSum)
-    correction = correction.toFixed(2)
-    console.log(correction)
+
     if(correction){
+      correction = correction.toFixed(2)
       const category = correction < 0 ? "correctionExpense" : "correctionIncome";
 
       const transaction = {
